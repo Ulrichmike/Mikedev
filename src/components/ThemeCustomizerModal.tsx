@@ -1,15 +1,26 @@
 "use client";
 
 import { motion, AnimatePresence } from "motion/react";
-import { X, Sun, Moon, Palette, Check, RotateCcw } from "lucide-react";
+import {
+  X,
+  Sun,
+  Moon,
+  Palette,
+  Check,
+  Sparkles,
+  RotateCcw,
+  Compass,
+  Grid,
+} from "lucide-react";
 
 import {
   useTheme,
   ACCENT_PALETTES,
   DARK_TONES,
   LIGHT_TONES,
+  COSMIC_MODES,
 } from "@/context/ThemeContext";
-import type { ThemeAccent, DarkBgTone, LightBgTone } from "@/types";
+import type { ThemeAccent, DarkBgTone, LightBgTone, CosmicMode } from "@/types";
 
 export function ThemeCustomizerModal() {
   const {
@@ -17,10 +28,12 @@ export function ThemeCustomizerModal() {
     accent,
     darkTone,
     lightTone,
+    cosmicMode,
     setTheme,
     setAccent,
     setDarkTone,
     setLightTone,
+    setCosmicMode,
     isThemeModalOpen,
     closeThemeModal,
   } = useTheme();
@@ -30,6 +43,7 @@ export function ThemeCustomizerModal() {
     setAccent("amber");
     setDarkTone("obsidian");
     setLightTone("alabaster");
+    setCosmicMode("galaxy");
   };
 
   return (
@@ -155,7 +169,7 @@ export function ThemeCustomizerModal() {
                 </div>
               </div>
 
-              {/* 2. Choix de la couleur d'accent */}
+              {/* 2. Teinte d'accent */}
               <div>
                 <div className="flex items-center justify-between mb-2.5">
                   <span className="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
@@ -287,6 +301,71 @@ export function ThemeCustomizerModal() {
                     })}
                   </div>
                 )}
+              </div>
+
+              {/* 4. Ambiance spatiale & cosmos */}
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-xs font-mono font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-500" />
+                    4. Arrière-Plan Spatial &amp; Cosmos
+                  </span>
+                  <span className="text-[11px] font-mono text-amber-500/90 font-medium">
+                    {COSMIC_MODES[cosmicMode].name}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2">
+                  {(Object.keys(COSMIC_MODES) as CosmicMode[]).map(
+                    (modeKey) => {
+                      const modeItem = COSMIC_MODES[modeKey];
+                      const isSelected = cosmicMode === modeKey;
+                      return (
+                        <button
+                          type="button"
+                          key={modeKey}
+                          onClick={() => setCosmicMode(modeKey)}
+                          className={`flex w-full items-center justify-between rounded-xl p-3 border text-left transition-all ${
+                            isSelected
+                              ? "border-amber-400/60 bg-amber-400/10 dark:bg-amber-400/10 text-zinc-900 dark:text-white shadow-sm ring-1 ring-amber-400/30"
+                              : "border-black/5 dark:border-white/5 hover:border-black/20 dark:hover:border-white/20 bg-black/[0.02] dark:bg-white/[0.02] text-zinc-600 dark:text-zinc-400"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`flex h-8 w-8 items-center justify-center rounded-lg border ${
+                                isSelected
+                                  ? "border-amber-400/50 bg-amber-400/20 text-amber-500 dark:text-amber-400"
+                                  : "border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 text-zinc-400"
+                              }`}
+                            >
+                              {modeKey === "galaxy" && (
+                                <Sparkles className="h-4 w-4" />
+                              )}
+                              {modeKey === "matrix" && (
+                                <Grid className="h-4 w-4" />
+                              )}
+                              {modeKey === "deep-space" && (
+                                <Compass className="h-4 w-4" />
+                              )}
+                            </div>
+                            <div>
+                              <div className="text-xs font-bold text-zinc-900 dark:text-white">
+                                {modeItem.name}
+                              </div>
+                              <div className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                                {modeItem.desc}
+                              </div>
+                            </div>
+                          </div>
+                          {isSelected && (
+                            <Check className="h-4 w-4 text-amber-500 dark:text-amber-400 shrink-0" />
+                          )}
+                        </button>
+                      );
+                    },
+                  )}
+                </div>
               </div>
             </div>
 

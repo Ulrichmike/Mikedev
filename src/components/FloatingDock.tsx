@@ -19,23 +19,11 @@ import {
 import { motion } from "motion/react";
 
 import { useTheme } from "@/context/ThemeContext";
+import { useModal } from "@/context/ModalContext";
 
-interface FloatingDockProps {
-  onOpenTerminal: () => void;
-  onOpenChallenge: () => void;
-  onOpenBooking: () => void;
-  onOpenCommandPalette?: () => void;
-  onOpenResume?: () => void;
-}
-
-export function FloatingDock({
-  onOpenTerminal,
-  onOpenChallenge,
-  onOpenBooking,
-  onOpenCommandPalette,
-  onOpenResume,
-}: FloatingDockProps) {
+export function FloatingDock() {
   const { theme, toggleTheme, currentAccent, openThemeModal } = useTheme();
+  const { openModal, scrollToSection } = useModal();
   const [activeSection, setActiveSection] = useState("top");
 
   // Suivi de la section active pour l'indicateur
@@ -66,7 +54,6 @@ export function FloatingDock({
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // Appel initial pour synchroniser au premier rendu
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
@@ -85,6 +72,13 @@ export function FloatingDock({
     { id: "projets", label: "Projets", href: "#projets", icon: Layers },
     { id: "services", label: "Services", href: "#services", icon: Code2 },
   ];
+
+  // ✅ Actions via le ModalProvider
+  const handleOpenTerminal = () => openModal("terminal");
+  const handleOpenChallenge = () => scrollToSection("defi");
+  const handleOpenBooking = () => scrollToSection("contact");
+  const handleOpenCommandPalette = () => openModal("commandPalette");
+  const handleOpenResume = () => openModal("resume");
 
   return (
     <div
@@ -137,10 +131,9 @@ export function FloatingDock({
 
           <div className="h-4 w-[1px] bg-black/10 dark:bg-white/10 mx-0.5" />
 
-          {/* Défi (mobile) */}
           <button
             type="button"
-            onClick={onOpenChallenge}
+            onClick={handleOpenChallenge}
             aria-label="Défi Développeur"
             className="flex h-9 w-9 items-center justify-center rounded-full text-purple-600 dark:text-purple-400 hover:bg-purple-500/15 active:scale-95"
             title="Défi Développeur"
@@ -148,7 +141,6 @@ export function FloatingDock({
             <Trophy className="h-4 w-4" />
           </button>
 
-          {/* Toggle thème (mobile) */}
           <button
             type="button"
             onClick={toggleTheme}
@@ -163,10 +155,9 @@ export function FloatingDock({
             )}
           </button>
 
-          {/* CTA RDV (mobile) */}
           <button
             type="button"
-            onClick={onOpenBooking}
+            onClick={handleOpenBooking}
             aria-label="Prendre rendez-vous"
             className={`flex h-8 items-center gap-1 rounded-full px-3 text-xs font-bold transition-all shadow-md active:scale-95 ml-1 ${currentAccent.btnClass}`}
           >
@@ -199,7 +190,6 @@ export function FloatingDock({
                     style={{ backgroundColor: currentAccent.color }}
                   />
                 )}
-                {/* Tooltip flottant */}
                 <span className="pointer-events-none absolute -top-8 rounded-md bg-zinc-900 text-white px-2 py-0.5 text-[10px] font-medium opacity-0 shadow-md transition-opacity group-hover:opacity-100 whitespace-nowrap">
                   {item.label}
                 </span>
@@ -209,7 +199,7 @@ export function FloatingDock({
 
           <div className="mx-1 h-5 w-[1px] bg-black/10 dark:bg-white/10" />
 
-          {/* Toggle thème rapide */}
+          {/* Toggle thème */}
           <button
             type="button"
             onClick={toggleTheme}
@@ -247,7 +237,7 @@ export function FloatingDock({
           {/* Défi */}
           <button
             type="button"
-            onClick={onOpenChallenge}
+            onClick={handleOpenChallenge}
             aria-label="Es-tu meilleur que le dev ?"
             className="group relative flex h-10 w-10 items-center justify-center rounded-full text-purple-600 dark:text-purple-400 transition-all hover:bg-purple-500/15"
             title="Es-tu meilleur que le dev ?"
@@ -259,41 +249,37 @@ export function FloatingDock({
           </button>
 
           {/* Palette de commandes */}
-          {onOpenCommandPalette && (
-            <button
-              type="button"
-              onClick={onOpenCommandPalette}
-              aria-label="Palette de commandes (Cmd+K)"
-              className="group relative flex h-10 w-10 items-center justify-center rounded-full text-zinc-700 dark:text-zinc-300 transition-all hover:bg-black/5 dark:hover:bg-white/10"
-              title="Palette de commandes (⌘K)"
-            >
-              <Search className="h-4 w-4 transition-transform group-hover:scale-110" />
-              <span className="pointer-events-none absolute -top-8 rounded-md bg-zinc-900 text-white px-2 py-0.5 text-[10px] font-medium opacity-0 shadow-md transition-opacity group-hover:opacity-100 whitespace-nowrap">
-                ⌘K
-              </span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleOpenCommandPalette}
+            aria-label="Palette de commandes (Cmd+K)"
+            className="group relative flex h-10 w-10 items-center justify-center rounded-full text-zinc-700 dark:text-zinc-300 transition-all hover:bg-black/5 dark:hover:bg-white/10"
+            title="Palette de commandes (⌘K)"
+          >
+            <Search className="h-4 w-4 transition-transform group-hover:scale-110" />
+            <span className="pointer-events-none absolute -top-8 rounded-md bg-zinc-900 text-white px-2 py-0.5 text-[10px] font-medium opacity-0 shadow-md transition-opacity group-hover:opacity-100 whitespace-nowrap">
+              ⌘K
+            </span>
+          </button>
 
           {/* CV */}
-          {onOpenResume && (
-            <button
-              type="button"
-              onClick={onOpenResume}
-              aria-label="Consulter le CV (PDF)"
-              className="group relative flex h-10 w-10 items-center justify-center rounded-full text-zinc-700 dark:text-zinc-300 transition-all hover:bg-black/5 dark:hover:bg-white/10"
-              title="Consulter le CV (PDF)"
-            >
-              <FileText className="h-4 w-4 transition-transform group-hover:scale-110 text-amber-500" />
-              <span className="pointer-events-none absolute -top-8 rounded-md bg-zinc-900 text-amber-300 px-2 py-0.5 text-[10px] font-medium opacity-0 shadow-md transition-opacity group-hover:opacity-100 whitespace-nowrap">
-                CV (PDF)
-              </span>
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={handleOpenResume}
+            aria-label="Consulter le CV (PDF)"
+            className="group relative flex h-10 w-10 items-center justify-center rounded-full text-zinc-700 dark:text-zinc-300 transition-all hover:bg-black/5 dark:hover:bg-white/10"
+            title="Consulter le CV (PDF)"
+          >
+            <FileText className="h-4 w-4 transition-transform group-hover:scale-110 text-amber-500" />
+            <span className="pointer-events-none absolute -top-8 rounded-md bg-zinc-900 text-amber-300 px-2 py-0.5 text-[10px] font-medium opacity-0 shadow-md transition-opacity group-hover:opacity-100 whitespace-nowrap">
+              CV (PDF)
+            </span>
+          </button>
 
           {/* Terminal */}
           <button
             type="button"
-            onClick={onOpenTerminal}
+            onClick={handleOpenTerminal}
             aria-label="Ouvrir le terminal CLI"
             className="group relative flex h-10 w-10 items-center justify-center rounded-full text-amber-600 dark:text-amber-400 transition-all hover:bg-amber-400/15"
             title="Terminal CLI"
@@ -304,10 +290,10 @@ export function FloatingDock({
             </span>
           </button>
 
-          {/* CTA RDV (desktop) */}
+          {/* CTA RDV */}
           <button
             type="button"
-            onClick={onOpenBooking}
+            onClick={handleOpenBooking}
             aria-label="Prendre rendez-vous"
             className={`group relative ml-1 flex h-9 sm:h-10 items-center gap-1.5 rounded-full px-3.5 sm:px-4 text-xs font-bold transition-all shadow-md active:scale-95 ${currentAccent.btnClass}`}
           >

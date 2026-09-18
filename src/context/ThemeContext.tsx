@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   createContext,
   useContext,
   useEffect,
@@ -9,7 +9,13 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import type { ThemeMode, ThemeAccent, DarkBgTone, LightBgTone } from "@/types";
+import type {
+  ThemeMode,
+  ThemeAccent,
+  DarkBgTone,
+  LightBgTone,
+  CosmicMode,
+} from "@/types";
 
 export type Theme = ThemeMode;
 
@@ -28,7 +34,6 @@ export interface AccentConfig {
 /* ============================================================
  * PALETTES D'ACCENT
  * ============================================================ */
-
 export const ACCENT_PALETTES: Record<ThemeAccent, AccentConfig> = {
   amber: {
     id: "amber",
@@ -92,7 +97,6 @@ export const ACCENT_PALETTES: Record<ThemeAccent, AccentConfig> = {
 /* ============================================================
  * TONS DE FOND
  * ============================================================ */
-
 export const DARK_TONES: Record<
   DarkBgTone,
   { name: string; bg: string; card: string; desc: string }
@@ -142,24 +146,44 @@ export const LIGHT_TONES: Record<
 };
 
 /* ============================================================
- * CONTEXT
+ * ✅ MODES COSMIQUES (arrière-plans spatiaux)
+ * Requis par ThemeCustomizerModal et CosmicSpaceBackground
  * ============================================================ */
+export const COSMIC_MODES: Record<CosmicMode, { name: string; desc: string }> =
+  {
+    galaxy: {
+      name: "Galaxie & Nébuleuses",
+      desc: "Champ d'étoiles scintillantes, nébuleuses colorées et étoiles filantes.",
+    },
+    matrix: {
+      name: "Matrice Cyber",
+      desc: "Grille numérique dense, étoiles rapides et ambiance cyberpunk.",
+    },
+    "deep-space": {
+      name: "Espace Profond",
+      desc: "Immensité cosmique, étoiles lentes et nébuleuses profondes.",
+    },
+  };
 
+/* ============================================================
+ * CONTEXT TYPE
+ * ============================================================ */
 interface ThemeContextType {
   theme: ThemeMode;
   accent: ThemeAccent;
   darkTone: DarkBgTone;
   lightTone: LightBgTone;
+  cosmicMode: CosmicMode;
   currentAccent: AccentConfig;
   activeBg: string;
   activeCard: string;
-  /** `true` une fois le composant monté côté client (utile pour éviter les flashs) */
   mounted: boolean;
   toggleTheme: () => void;
   setTheme: (theme: ThemeMode) => void;
   setAccent: (accent: ThemeAccent) => void;
   setDarkTone: (tone: DarkBgTone) => void;
   setLightTone: (tone: LightBgTone) => void;
+  setCosmicMode: (mode: CosmicMode) => void;
   isThemeModalOpen: boolean;
   openThemeModal: () => void;
   closeThemeModal: () => void;
@@ -173,36 +197,33 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 /* ============================================================
  * VALEURS PAR DÉFAUT
  * ============================================================ */
-
 const DEFAULT_THEME: ThemeMode = "dark";
 const DEFAULT_ACCENT: ThemeAccent = "amber";
 const DEFAULT_DARK_TONE: DarkBgTone = "obsidian";
 const DEFAULT_LIGHT_TONE: LightBgTone = "alabaster";
+const DEFAULT_COSMIC_MODE: CosmicMode = "galaxy";
 const DEFAULT_SOUND = true;
 
 /* ============================================================
  * PROVIDER
  * ============================================================ */
-
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
-  // États initialisés avec des valeurs par défaut SÛRES (pas de localStorage ici !)
   const [theme, setThemeState] = useState<ThemeMode>(DEFAULT_THEME);
   const [accent, setAccentState] = useState<ThemeAccent>(DEFAULT_ACCENT);
   const [darkTone, setDarkToneState] = useState<DarkBgTone>(DEFAULT_DARK_TONE);
   const [lightTone, setLightToneState] =
     useState<LightBgTone>(DEFAULT_LIGHT_TONE);
+  const [cosmicMode, setCosmicModeState] =
+    useState<CosmicMode>(DEFAULT_COSMIC_MODE);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(DEFAULT_SOUND);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
 
-  // Référence AudioContext partagée pour éviter d'en créer un à chaque son
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   /* ------------------------------------------------------------
-   * 1. HYDRATATION DEPUIS localStorage (uniquement au montage)
+   * 1. HYDRATATION DEPUIS localStorage
    * ------------------------------------------------------------ */
   useEffect(() => {
     try {
@@ -234,12 +255,22 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
         setLightToneState(savedLightTone);
       }
 
+      const savedCosmic = localStorage.getItem(
+        "mw_cosmic_mode",
+      ) as CosmicMode | null;
+      if (
+        savedCosmic === "galaxy" ||
+        savedCosmic === "matrix" ||
+        savedCosmic === "deep-space"
+      ) {
+        setCosmicModeState(savedCosmic);
+      }
+
       const savedSound = localStorage.getItem("mw_sound_enabled");
       if (savedSound !== null) {
         setSoundEnabled(savedSound === "true");
       }
     } catch (err) {
-      // localStorage peut échouer en navigation privée ou si bloqué
       console.warn("[ThemeProvider] localStorage access failed:", err);
     } finally {
       setMounted(true);
@@ -247,7 +278,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   /* ------------------------------------------------------------
-   * 2. PERSISTANCE + APPLICATION AU DOM (à chaque changement)
+   * 2. APPLICATION AU DOM
    * ------------------------------------------------------------ */
   useEffect(() => {
     if (!mounted) return;
@@ -257,6 +288,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       localStorage.setItem("mw_theme_accent", accent);
       localStorage.setItem("mw_theme_dark_tone", darkTone);
       localStorage.setItem("mw_theme_light_tone", lightTone);
+      localStorage.setItem("mw_cosmic_mode", cosmicMode);
 
       const root = document.documentElement;
 
@@ -272,6 +304,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
       root.setAttribute("data-accent", accent);
       root.setAttribute("data-tone", theme === "dark" ? darkTone : lightTone);
+      root.setAttribute("data-cosmic", cosmicMode);
 
       const currentAcc = ACCENT_PALETTES[accent];
       root.style.setProperty("--accent-color", currentAcc.color);
@@ -289,7 +322,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch (err) {
       console.error("[ThemeProvider] Failed to apply theme:", err);
     }
-  }, [mounted, theme, accent, darkTone, lightTone]);
+  }, [mounted, theme, accent, darkTone, lightTone, cosmicMode]);
 
   /* ------------------------------------------------------------
    * 3. PERSISTANCE DU SON
@@ -311,7 +344,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!soundEnabled) return;
       if (typeof window === "undefined") return;
 
-      // Type-safe : AudioContext est maintenant reconnu partout
       const AudioCtor =
         window.AudioContext ||
         (window as Window & { webkitAudioContext?: typeof AudioContext })
@@ -319,7 +351,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!AudioCtor) return;
 
       try {
-        // Réutilise le même AudioContext pour éviter la fuite mémoire
         if (!audioCtxRef.current) {
           audioCtxRef.current = new AudioCtor();
         }
@@ -365,7 +396,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
           osc.stop(now + 0.28);
         }
       } catch {
-        // Politique d'autoplay ou contexte bloqué — on ignore silencieusement
+        /* Politique d'autoplay ou contexte bloqué */
       }
     },
     [soundEnabled],
@@ -385,9 +416,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     (lt: LightBgTone) => setLightToneState(lt),
     [],
   );
+  const setCosmicMode = useCallback(
+    (cm: CosmicMode) => setCosmicModeState(cm),
+    [],
+  );
 
   const toggleSound = useCallback(() => setSoundEnabled((prev) => !prev), []);
-
   const openThemeModal = useCallback(() => setIsThemeModalOpen(true), []);
   const closeThemeModal = useCallback(() => setIsThemeModalOpen(false), []);
 
@@ -416,6 +450,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       accent,
       darkTone,
       lightTone,
+      cosmicMode,
       currentAccent,
       activeBg,
       activeCard,
@@ -425,6 +460,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       setAccent,
       setDarkTone,
       setLightTone,
+      setCosmicMode,
       isThemeModalOpen,
       openThemeModal,
       closeThemeModal,
@@ -437,6 +473,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       accent,
       darkTone,
       lightTone,
+      cosmicMode,
       currentAccent,
       activeBg,
       activeCard,
@@ -446,6 +483,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       setAccent,
       setDarkTone,
       setLightTone,
+      setCosmicMode,
       isThemeModalOpen,
       openThemeModal,
       closeThemeModal,
@@ -460,12 +498,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
 /* ============================================================
  * HOOK
  * ============================================================ */
-
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {

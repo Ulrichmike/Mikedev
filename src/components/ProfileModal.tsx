@@ -178,7 +178,7 @@ export function ProfileModal({
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    avatarUrl: "/assets/portrait.jfif",
+                    avatarUrl: "/assets/portrait.jpg",
                   })
                 }
                 className="whitespace-nowrap rounded-xl border border-black/10 dark:border-white/10 px-3 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-black/5 dark:hover:bg-white/5"

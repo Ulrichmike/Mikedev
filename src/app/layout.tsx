@@ -6,7 +6,10 @@ import {
 } from "next/font/google";
 
 import { ThemeProvider } from "@/context/ThemeContext";
+
 import "./globals.css";
+import { ModalProvider } from "@/context/ModalContext";
+import Script from "next/script";
 
 /* ============================================================
  * CHARGEMENT DES POLICES (auto-hébergées, 0 requête Google)
@@ -36,7 +39,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Mike Weda · Portfolio Full-Stack",
   description:
-    "Développeur Full-Stack & Tech Creator. Architectures web robustes, SaaS à fort impact, interfaces produit d’exception.",
+    "Développeur Full-Stack & Tech Creator. Architectures web robustes, SaaS à fort impact, interfaces produit d'exception.",
   authors: [{ name: "Mike Weda" }],
   openGraph: {
     title: "Mike Weda · Portfolio Full-Stack",
@@ -45,9 +48,6 @@ export const metadata: Metadata = {
   },
 };
 
-/* ============================================================
- * LAYOUT RACINE
- * ============================================================ */
 export default function RootLayout({
   children,
 }: {
@@ -60,8 +60,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Script anti-FOUC : applique la classe dark avant le premier paint */}
-        <script
+        {/* ✅ next/script au lieu de <script> */}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
@@ -71,11 +73,13 @@ export default function RootLayout({
                   var tone = mode === 'dark'
                     ? (localStorage.getItem('mw_theme_dark_tone') || 'obsidian')
                     : (localStorage.getItem('mw_theme_light_tone') || 'alabaster');
+                  var cosmic = localStorage.getItem('mw_cosmic_mode') || 'galaxy';
                   var root = document.documentElement;
                   root.classList.add(mode);
                   root.setAttribute('data-theme', mode);
                   root.setAttribute('data-accent', accent);
                   root.setAttribute('data-tone', tone);
+                  root.setAttribute('data-cosmic', cosmic);
                 } catch (e) {}
               })();
             `,
@@ -83,7 +87,9 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ModalProvider>{children}</ModalProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

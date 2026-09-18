@@ -1,9 +1,6 @@
-// src/types/index.ts
-
 /* ============================================================
  * PROJETS
  * ============================================================ */
-
 export interface Project {
   id: string;
   title: string;
@@ -26,14 +23,12 @@ export interface Project {
     | "audio-focus"
     | "ecommerce"
     | "agentic-canvas";
-  /** Chemin local (ex: /images/projects/x.png) ou URL externe (à whitelister dans next.config.ts) */
   image?: string;
 }
 
 /* ============================================================
  * SERVICES
  * ============================================================ */
-
 export interface Service {
   id: string;
   number: string;
@@ -42,14 +37,12 @@ export interface Service {
   description: string;
   skills: string[];
   deliverables: string[];
-  /** Nom d'icône lucide-react (ex: 'Code2', 'Rocket') */
   icon: string;
 }
 
 /* ============================================================
- * EXPÉRIENCES PROFESSIONNELLES
+ * EXPÉRIENCES
  * ============================================================ */
-
 export interface Experience {
   id: string;
   period: string;
@@ -65,7 +58,6 @@ export interface Experience {
 /* ============================================================
  * PROFIL UTILISATEUR
  * ============================================================ */
-
 export interface UserProfile {
   name: string;
   alias: string;
@@ -80,14 +72,12 @@ export interface UserProfile {
   linkedin: string;
   twitter: string;
   youtube?: string;
-  /** Chemin local (ex: /avatar.webp) ou URL externe (à whitelister dans next.config.ts) */
   avatarUrl?: string;
 }
 
 /* ============================================================
  * THÈME
  * ============================================================ */
-
 export type ThemeMode = "dark" | "light";
 
 export type ThemeAccent = "amber" | "emerald" | "purple" | "blue" | "rose";
@@ -95,55 +85,69 @@ export type ThemeAccent = "amber" | "emerald" | "purple" | "blue" | "rose";
 export type DarkBgTone = "obsidian" | "midnight" | "graphite";
 export type LightBgTone = "alabaster" | "editorial" | "slate";
 
+/* ✅ CORRECTION : 'galaxy' au lieu de 'default' */
+export type CosmicMode = "galaxy" | "matrix" | "deep-space";
+
 export interface ThemeSettings {
   mode: ThemeMode;
   accent: ThemeAccent;
   darkTone: DarkBgTone;
   lightTone: LightBgTone;
+  cosmicMode?: CosmicMode;
+}
+
+/* ============================================================
+ * TÉMOIGNAGES & OFFRES CLIENTS
+ * ============================================================ */
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  avatar: string;
+  rating: number;
+  content: string;
+  projectResult: string;
+  projectTag: string;
+  linkedin?: string;
+}
+
+export interface ClientOffer {
+  id: string;
+  name: string;
+  badge?: string;
+  popular?: boolean;
+  idealFor: string;
+  priceEstimate: string;
+  turnaroundTime: string;
+  description: string;
+  features: string[];
+  deliverables: string[];
+  guarantee: string;
+}
+
+export interface ClientFaq {
+  q: string;
+  a: string;
 }
 
 /* ============================================================
  * DÉFI DÉVELOPPEUR
  * ============================================================ */
-
 export interface ChallengeSnippet {
   id: string;
   title: string;
   language: string;
   code: string;
   explanation?: string;
-  /** Ligne contenant le bug (1-indexed) */
   bugLine?: number;
   bugFix?: string;
 }
 
-/* ============================================================
- * TYPES UTILITAIRES (bonus Next.js)
- * ============================================================ */
-
-/** Utilise pour typer les callbacks d'ouverture de modales dans un contexte global */
-export type ModalName =
-  | "commandPalette"
-  | "booking"
-  | "challenge"
-  | "terminal"
-  | "resume"
-  | "themeStudio"
-  | null;
-
-/** Utilise pour les retours de Server Actions Next.js */
-export type ActionState<T = void> =
-  | { status: "idle" }
-  | { status: "loading" }
-  | { status: "success"; data: T }
-  | { status: "error"; message: string };
-
-/** Nouveau type pour le mode Bug Hunter */
 export interface BugChallenge {
   id: string;
   title: string;
   snippet: string;
-  /** Ligne contenant le bug (1-indexed) */
   correctLine: number;
   hint: string;
   explanation: string;

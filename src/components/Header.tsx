@@ -21,27 +21,14 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 
 import { useTheme } from "@/context/ThemeContext";
+import { useModal } from "@/context/ModalContext";
 import type { UserProfile } from "@/types";
 
 interface HeaderProps {
   profile: UserProfile;
-  onOpenTerminal: () => void;
-  onOpenChallenge: () => void;
-  onOpenBooking: () => void;
-  onOpenCustomize: () => void;
-  onOpenCommandPalette: () => void;
-  onOpenResume: () => void;
 }
 
-export function Header({
-  profile,
-  onOpenTerminal,
-  onOpenChallenge,
-  onOpenBooking,
-  onOpenCustomize,
-  onOpenCommandPalette,
-  onOpenResume,
-}: HeaderProps) {
+export function Header({ profile }: HeaderProps) {
   const {
     theme,
     toggleTheme,
@@ -51,6 +38,9 @@ export function Header({
     toggleSound,
     playSound,
   } = useTheme();
+
+  // ✅ Toutes les actions de modales viennent du contexte
+  const { openModal, scrollToSection } = useModal();
 
   const [copied, setCopied] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -64,6 +54,20 @@ export function Header({
       // Le presse-papier peut échouer en contexte non sécurisé
     }
   };
+
+  // ✅ Raccourcis réutilisables pour éviter la répétition
+  const handleOpenBooking = () => scrollToSection("contact");
+  const handleOpenChallenge = () => scrollToSection("defi");
+  const handleOpenTerminal = () => openModal("terminal");
+  const handleOpenCommandPalette = () => {
+    playSound("tab");
+    openModal("commandPalette");
+  };
+  const handleOpenResume = () => {
+    playSound("click");
+    openModal("resume");
+  };
+  const handleOpenCustomize = () => openModal("customize");
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-black/5 dark:border-white/5 bg-white/80 dark:bg-[#090a0f]/80 backdrop-blur-xl transition-colors duration-300">
@@ -122,10 +126,7 @@ export function Header({
           {/* Palette de commandes */}
           <button
             type="button"
-            onClick={() => {
-              playSound("tab");
-              onOpenCommandPalette();
-            }}
+            onClick={handleOpenCommandPalette}
             className="flex items-center gap-2 rounded-full border border-black/10 dark:border-white/10 bg-black/[0.03] dark:bg-white/[0.05] px-3 py-1.5 text-xs text-zinc-600 dark:text-zinc-300 hover:border-black/25 dark:hover:border-white/25 transition-all"
             title="Recherche & Palette de commandes (Cmd + K)"
           >
@@ -139,10 +140,7 @@ export function Header({
           {/* CV PDF */}
           <button
             type="button"
-            onClick={() => {
-              playSound("click");
-              onOpenResume();
-            }}
+            onClick={handleOpenResume}
             className="flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-1.5 text-xs font-semibold text-zinc-800 dark:text-zinc-200 hover:bg-black/5 dark:hover:bg-white/10 transition-all"
             title="Consulter et télécharger le CV (PDF)"
           >
@@ -234,7 +232,7 @@ export function Header({
           {/* Terminal */}
           <button
             type="button"
-            onClick={onOpenTerminal}
+            onClick={handleOpenTerminal}
             className="flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 px-3 py-1.5 text-xs font-medium text-zinc-700 dark:text-zinc-300 transition-all hover:border-amber-400/50 hover:bg-amber-400/10"
             title="Ouvrir la console développeur (CLI)"
           >
@@ -245,7 +243,7 @@ export function Header({
           {/* Défi */}
           <button
             type="button"
-            onClick={onOpenChallenge}
+            onClick={handleOpenChallenge}
             className="flex items-center gap-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 py-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 transition-all hover:border-purple-400 hover:bg-purple-500/20"
             title="Es-tu meilleur que le dev ? Relève le défi !"
           >
@@ -259,7 +257,7 @@ export function Header({
           {/* CTA RDV */}
           <button
             type="button"
-            onClick={onOpenBooking}
+            onClick={handleOpenBooking}
             className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold transition-all shadow-md active:scale-95 ${currentAccent.btnClass}`}
           >
             <Calendar className="h-3.5 w-3.5" />
@@ -269,7 +267,7 @@ export function Header({
           {/* Personnalisation du profil */}
           <button
             type="button"
-            onClick={onOpenCustomize}
+            onClick={handleOpenCustomize}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 text-zinc-600 dark:text-zinc-400 transition-colors hover:border-black/20 dark:hover:border-white/20 hover:text-black dark:hover:text-white"
             title="Modifier le profil (Nom, Bio, Photo)"
             aria-label="Modifier le profil"
@@ -283,10 +281,7 @@ export function Header({
           {/* Recherche / palette de commandes */}
           <button
             type="button"
-            onClick={() => {
-              playSound("tab");
-              onOpenCommandPalette();
-            }}
+            onClick={handleOpenCommandPalette}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5 text-zinc-700 dark:text-zinc-300 transition-colors"
             title="Palette de commandes (⌘K)"
             aria-label="Recherche et commandes"
@@ -326,7 +321,7 @@ export function Header({
           {/* CTA RDV compact */}
           <button
             type="button"
-            onClick={onOpenBooking}
+            onClick={handleOpenBooking}
             className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-bold transition-all shadow-sm ${currentAccent.btnClass}`}
           >
             <Calendar className="h-3.5 w-3.5" />
@@ -395,7 +390,7 @@ export function Header({
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    onOpenBooking();
+                    handleOpenBooking();
                   }}
                   className={`flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-bold col-span-2 ${currentAccent.btnClass}`}
                 >
@@ -407,7 +402,7 @@ export function Header({
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    onOpenChallenge();
+                    handleOpenChallenge();
                   }}
                   className="flex items-center gap-2 rounded-xl border border-purple-500/25 bg-purple-500/10 p-3 text-xs font-semibold text-purple-700 dark:text-purple-300"
                 >
@@ -419,7 +414,7 @@ export function Header({
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    onOpenTerminal();
+                    handleOpenTerminal();
                   }}
                   className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] p-3 text-xs font-medium text-zinc-800 dark:text-zinc-200"
                 >
@@ -431,8 +426,7 @@ export function Header({
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    playSound("tab");
-                    onOpenCommandPalette();
+                    handleOpenCommandPalette();
                   }}
                   className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] p-3 text-xs font-medium text-zinc-800 dark:text-zinc-200"
                 >
@@ -444,8 +438,7 @@ export function Header({
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    playSound("click");
-                    onOpenResume();
+                    handleOpenResume();
                   }}
                   className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] p-3 text-xs font-medium text-zinc-800 dark:text-zinc-200"
                 >
@@ -493,7 +486,7 @@ export function Header({
                   type="button"
                   onClick={() => {
                     setMobileMenuOpen(false);
-                    onOpenCustomize();
+                    handleOpenCustomize();
                   }}
                   className="flex items-center gap-2 rounded-xl border border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] p-3 text-xs font-medium text-zinc-800 dark:text-zinc-200"
                 >

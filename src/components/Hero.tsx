@@ -16,31 +16,23 @@ import {
 } from "lucide-react";
 
 import { useTheme } from "@/context/ThemeContext";
+import { useModal } from "@/context/ModalContext";
 import {
   GithubIcon,
   LinkedinIcon,
   TwitterIcon,
   YoutubeIcon,
 } from "@/components/icons/BrandIcons";
-import { HeroAnimatedPortrait } from "./HeroAnimatedPortrait";
+import { HeroAnimatedPortrait } from "@/components/HeroAnimatedPortrait";
 import type { UserProfile } from "@/types";
 
 interface HeroProps {
   profile: UserProfile;
-  onOpenChallenge: () => void;
-  onOpenTerminal: () => void;
-  onOpenBooking: () => void;
-  onOpenResume?: () => void;
 }
 
-export function Hero({
-  profile,
-  onOpenChallenge,
-  onOpenTerminal,
-  onOpenBooking,
-  onOpenResume,
-}: HeroProps) {
+export function Hero({ profile }: HeroProps) {
   const { currentAccent } = useTheme();
+  const { openModal, scrollToSection } = useModal();
   const [copied, setCopied] = useState(false);
 
   const handleCopyEmail = async () => {
@@ -49,9 +41,14 @@ export function Hero({
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     } catch {
-      // Le presse-papier peut échouer en contexte non sécurisé
+      // Silencieux
     }
   };
+
+  const handleOpenBooking = () => scrollToSection("contact");
+  const handleOpenChallenge = () => scrollToSection("defi");
+  const handleOpenTerminal = () => openModal("terminal");
+  const handleOpenResume = () => openModal("resume");
 
   return (
     <section
@@ -68,11 +65,10 @@ export function Hero({
       <div className="pointer-events-none absolute top-1/3 -right-20 -z-10 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        {/* Grille principale : texte à gauche, portrait à droite */}
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-8">
-          {/* Colonne gauche : contenu éditorial (cols 1-7) */}
+          {/* Colonne gauche */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Badge d'accroche avec statut */}
+            {/* Badge d'accroche */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -116,12 +112,12 @@ export function Hero({
                 <span style={{ color: currentAccent.color }}>.</span>
               </motion.h1>
 
-              {/* Portrait mobile (affiché entre le titre et le texte) */}
+              {/* Portrait mobile */}
               <div className="block lg:hidden pt-2 pb-2">
                 <HeroAnimatedPortrait
                   profile={profile}
-                  onOpenBooking={onOpenBooking}
-                  onOpenTerminal={onOpenTerminal}
+                  onOpenBooking={handleOpenBooking}
+                  onOpenTerminal={handleOpenTerminal}
                 />
               </div>
 
@@ -175,17 +171,15 @@ export function Hero({
               transition={{ duration: 0.55, delay: 0.3 }}
               className="flex flex-wrap items-center gap-3 sm:gap-4 pt-1"
             >
-              {/* CTA principal */}
               <button
                 type="button"
-                onClick={onOpenBooking}
+                onClick={handleOpenBooking}
                 className={`group relative inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold transition-all shadow-xl active:scale-95 ${currentAccent.btnClass}`}
               >
                 <span>Réserver un appel découverte (Offert)</span>
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </button>
 
-              {/* CTA secondaire : Projets */}
               <a
                 href="#projets"
                 className="group inline-flex items-center gap-2 rounded-full border border-black/15 dark:border-white/15 bg-white dark:bg-white/5 px-5 py-3.5 text-sm font-semibold text-zinc-800 dark:text-white transition-all hover:bg-zinc-100 dark:hover:bg-white/10 hover:border-black/30 dark:hover:border-white/30"
@@ -194,23 +188,19 @@ export function Hero({
                 <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5 text-zinc-500" />
               </a>
 
-              {/* CV direct */}
-              {onOpenResume && (
-                <button
-                  type="button"
-                  onClick={onOpenResume}
-                  className="group inline-flex items-center gap-2 rounded-full border border-black/15 dark:border-white/15 bg-white dark:bg-white/5 px-4 sm:px-5 py-3.5 text-sm font-semibold text-zinc-800 dark:text-white transition-all hover:bg-zinc-100 dark:hover:bg-white/10 hover:border-black/30 dark:hover:border-white/30 active:scale-95"
-                  title="Consulter et télécharger le CV (PDF)"
-                >
-                  <FileText className="h-4 w-4 text-amber-500 transition-transform group-hover:scale-110" />
-                  <span>CV (PDF)</span>
-                </button>
-              )}
-
-              {/* Signature : Défi développeur */}
               <button
                 type="button"
-                onClick={onOpenChallenge}
+                onClick={handleOpenResume}
+                className="group inline-flex items-center gap-2 rounded-full border border-black/15 dark:border-white/15 bg-white dark:bg-white/5 px-4 sm:px-5 py-3.5 text-sm font-semibold text-zinc-800 dark:text-white transition-all hover:bg-zinc-100 dark:hover:bg-white/10 hover:border-black/30 dark:hover:border-white/30 active:scale-95"
+                title="Consulter et télécharger le CV (PDF)"
+              >
+                <FileText className="h-4 w-4 text-amber-500 transition-transform group-hover:scale-110" />
+                <span>CV (PDF)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleOpenChallenge}
                 className="group inline-flex items-center gap-2 rounded-full border border-purple-500/40 bg-purple-500/10 px-4 py-3.5 text-sm font-semibold text-purple-700 dark:text-purple-200 transition-all hover:border-purple-400 hover:bg-purple-500/20 active:scale-95"
               >
                 <Trophy className="h-4 w-4 text-purple-600 dark:text-purple-400 transition-transform group-hover:scale-110" />
@@ -224,7 +214,7 @@ export function Hero({
               </button>
             </motion.div>
 
-            {/* Réseaux sociaux + connexion directe */}
+            {/* Réseaux sociaux */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -282,7 +272,7 @@ export function Hero({
 
                 <button
                   type="button"
-                  onClick={onOpenTerminal}
+                  onClick={handleOpenTerminal}
                   className="ml-2 hidden items-center gap-1.5 rounded-full border border-dashed border-amber-400/40 bg-amber-400/10 px-3 py-1 text-xs font-mono text-amber-700 dark:text-amber-300 hover:bg-amber-400/20 sm:inline-flex"
                 >
                   <Terminal className="h-3 w-3" />
@@ -290,7 +280,6 @@ export function Hero({
                 </button>
               </div>
 
-              {/* Copier l'email */}
               <button
                 type="button"
                 onClick={handleCopyEmail}
@@ -316,12 +305,12 @@ export function Hero({
             </motion.div>
           </div>
 
-          {/* Colonne droite : portrait animé (cols 8-12) */}
+          {/* Colonne droite : portrait desktop */}
           <div className="hidden lg:col-span-5 lg:block pl-4">
             <HeroAnimatedPortrait
               profile={profile}
-              onOpenBooking={onOpenBooking}
-              onOpenTerminal={onOpenTerminal}
+              onOpenBooking={handleOpenBooking}
+              onOpenTerminal={handleOpenTerminal}
             />
           </div>
         </div>

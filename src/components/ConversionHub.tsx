@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import {
   Check,
@@ -12,20 +12,18 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
+import { useModal } from "@/context/ModalContext";
 import {
   clientOffersData,
   testimonialsData,
   clientFaqs,
 } from "@/data/conversionData";
 
-interface ConversionHubProps {
-  onOpenBooking: () => void;
-}
-
-export const ConversionHub: React.FC<ConversionHubProps> = ({
-  onOpenBooking,
-}) => {
+export function ConversionHub() {
+  const { scrollToSection } = useModal();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const handleOpenBooking = () => scrollToSection("contact");
 
   const toggleFaq = (index: number) => {
     setOpenFaq((prev) => (prev === index ? null : index));
@@ -37,7 +35,7 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
       className="py-16 md:py-24 border-t border-black/5 dark:border-white/5 transition-colors duration-300"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        {/* Section Header */}
+        {/* En-tête de section */}
         <div className="text-center max-w-3xl mx-auto">
           <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
             <ShieldCheck className="h-3.5 w-3.5" />
@@ -55,7 +53,7 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
           </p>
         </div>
 
-        {/* Pricing & Offers Cards */}
+        {/* Cartes d'offres */}
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-3">
           {clientOffersData.map((offer) => (
             <motion.div
@@ -67,7 +65,6 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
                   : "border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#10131d] shadow-sm dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]"
               }`}
             >
-              {/* Popular badge */}
               {offer.popular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-400 px-3 py-0.5 text-[11px] font-bold text-black uppercase tracking-wider shadow-md">
                   Le plus demandé
@@ -92,7 +89,6 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
                   {offer.description}
                 </p>
 
-                {/* Price Display */}
                 <div className="mt-4 pb-4 border-b border-black/10 dark:border-white/10">
                   <div className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white font-mono">
                     {offer.priceEstimate}
@@ -102,7 +98,6 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
                   </div>
                 </div>
 
-                {/* Features List */}
                 <div className="mt-5 space-y-2.5">
                   <span className="font-mono text-[11px] font-bold text-zinc-700 dark:text-zinc-300 uppercase">
                     Inclus dans l&apos;offre :
@@ -118,18 +113,16 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
                   ))}
                 </div>
 
-                {/* Guarantee */}
                 <div className="mt-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-[11px] text-emerald-800 dark:text-emerald-300 flex items-start gap-2">
                   <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-500" />
                   <span>{offer.guarantee}</span>
                 </div>
               </div>
 
-              {/* Offer CTA button */}
               <div className="mt-8 pt-4 border-t border-black/5 dark:border-white/5">
                 <button
                   type="button"
-                  onClick={onOpenBooking}
+                  onClick={handleOpenBooking}
                   className={`w-full flex items-center justify-center gap-2 rounded-2xl py-3 text-xs font-bold transition-all ${
                     offer.popular
                       ? "bg-amber-400 text-black hover:bg-amber-300 shadow-lg shadow-amber-400/20 hover:scale-[1.02]"
@@ -144,7 +137,7 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
           ))}
         </div>
 
-        {/* Client Testimonials (Social Proof for Conversion) */}
+        {/* Témoignages clients */}
         <div className="mt-20">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-b border-black/10 dark:border-white/10 pb-6">
             <div>
@@ -174,9 +167,8 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
                 className="flex flex-col justify-between rounded-3xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#10131d] p-6 shadow-sm transition-all hover:border-black/20 dark:hover:border-white/20 dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]"
               >
                 <div>
-                  {/* Rating Stars */}
                   <div className="flex items-center gap-1 text-amber-500">
-                    {[...Array(test.rating)].map((_, i) => (
+                    {Array.from({ length: test.rating }).map((_, i) => (
                       <Star
                         key={i}
                         className="h-3.5 w-3.5 fill-amber-400 text-amber-400"
@@ -184,18 +176,15 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
                     ))}
                   </div>
 
-                  {/* Impact highlight pill */}
                   <div className="mt-3 inline-block rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-mono font-bold text-emerald-700 dark:text-emerald-400">
                     {test.projectResult}
                   </div>
 
-                  {/* Review body */}
                   <p className="mt-4 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 italic">
                     &ldquo;{test.content}&rdquo;
                   </p>
                 </div>
 
-                {/* Author row */}
                 <div className="mt-6 flex items-center gap-3 border-t border-black/5 dark:border-white/5 pt-4">
                   <Image
                     src={test.avatar}
@@ -218,7 +207,7 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
           </div>
         </div>
 
-        {/* Client FAQ Section */}
+        {/* FAQ */}
         <div className="mt-20 max-w-3xl mx-auto">
           <div className="text-center">
             <div className="inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-700 dark:text-zinc-300">
@@ -267,13 +256,12 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
             ))}
           </div>
 
-          {/* Quick FAQ Bottom CTA */}
           <div className="mt-8 text-center">
             <p className="text-xs text-zinc-500">
               Une autre question spécifique ?{" "}
               <button
                 type="button"
-                onClick={onOpenBooking}
+                onClick={handleOpenBooking}
                 className="text-amber-600 dark:text-amber-400 font-semibold underline underline-offset-2 hover:text-amber-500"
               >
                 Posez-la directement lors de notre échange visio gratuit →
@@ -284,4 +272,4 @@ export const ConversionHub: React.FC<ConversionHubProps> = ({
       </div>
     </section>
   );
-};
+}

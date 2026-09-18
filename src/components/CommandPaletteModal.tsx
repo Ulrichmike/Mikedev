@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   Layers,
@@ -23,13 +23,15 @@ import {
   Briefcase,
   ShieldCheck,
   Code2,
+  Grid,
+  Compass,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 import { GithubIcon, LinkedinIcon } from "@/components/icons/BrandIcons";
-import type { UserProfile, Project } from "@/types";
 import { useTheme } from "@/context/ThemeContext";
 import { projectsData } from "@/data/portfolioData";
+import type { UserProfile, Project } from "@/types";
 
 interface CommandPaletteModalProps {
   isOpen: boolean;
@@ -55,7 +57,7 @@ interface CommandItem {
   badge?: string;
 }
 
-export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
+export function CommandPaletteModal({
   isOpen,
   onClose,
   profile,
@@ -63,12 +65,14 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
   onOpenChallenge,
   onOpenTerminal,
   onOpenResume,
-}) => {
+}: CommandPaletteModalProps) {
   const {
     theme,
     toggleTheme,
     accent,
     setAccent,
+    cosmicMode,
+    setCosmicMode,
     openThemeModal,
     soundEnabled,
     toggleSound,
@@ -113,7 +117,9 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     }, 100);
   };
 
-  // ==================== CATALOGUE DE COMMANDES ====================
+  /* ============================================================
+   * CATALOGUE DE COMMANDES
+   * ============================================================ */
   const allCommands: CommandItem[] = [
     // ---------- Navigation ----------
     {
@@ -367,9 +373,50 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
       },
       badge: accent === "rose" ? "Actif" : undefined,
     },
+
+    // ---------- Ambiance spatiale ----------
+    {
+      id: "space-galaxy",
+      category: "Thème & Audio",
+      title: "Espace : Nébuleuse & Voie Lactée",
+      subtitle: "Lueurs galactiques, poussière cosmique et comètes régulières",
+      icon: Sparkles,
+      action: () => {
+        playSound("switch");
+        setCosmicMode("galaxy");
+      },
+      badge: cosmicMode === "galaxy" ? "Cosmos Actif" : undefined,
+    },
+    {
+      id: "space-matrix",
+      category: "Thème & Audio",
+      title: "Espace : Cyber-Grille & Perspective",
+      subtitle: "Quadrillage spatial 3D avec micro-repères de visée et warp",
+      icon: Grid,
+      action: () => {
+        playSound("switch");
+        setCosmicMode("matrix");
+      },
+      badge: cosmicMode === "matrix" ? "Cosmos Actif" : undefined,
+    },
+    {
+      id: "space-deep-space",
+      category: "Thème & Audio",
+      title: "Espace : Cosmos & Constellations",
+      subtitle:
+        "Champ d'étoiles haute densité et liens de constellations à la souris",
+      icon: Compass,
+      action: () => {
+        playSound("switch");
+        setCosmicMode("deep-space");
+      },
+      badge: cosmicMode === "deep-space" ? "Cosmos Actif" : undefined,
+    },
   ];
 
-  // ==================== FILTRAGE ====================
+  /* ============================================================
+   * FILTRAGE
+   * ============================================================ */
   const filteredCommands = allCommands.filter((cmd) => {
     if (!query.trim()) return true;
     const q = query.toLowerCase();
@@ -380,7 +427,9 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     );
   });
 
-  // ==================== NAVIGATION CLAVIER ====================
+  /* ============================================================
+   * NAVIGATION CLAVIER
+   * ============================================================ */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -416,138 +465,145 @@ export const CommandPaletteModal: React.FC<CommandPaletteModalProps> = ({
     setSelectedIndex(0);
   }, [query]);
 
-  if (!isOpen) return null;
-
-  // ==================== RENDU ====================
+  /* ============================================================
+   * RENDU
+   * ============================================================ */
   return (
-    <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 pt-16 sm:pt-24 bg-black/75 backdrop-blur-md overflow-hidden"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Palette de commandes"
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: -15 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.96, y: -15 }}
-        transition={{ duration: 0.2 }}
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 dark:border-white/15 bg-white dark:bg-[#10131d] shadow-2xl dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] flex flex-col max-h-[80vh]"
-      >
-        {/* Barre de recherche */}
-        <div className="flex items-center gap-3 border-b border-black/10 dark:border-white/10 px-5 py-4">
-          <Search className="h-5 w-5 text-zinc-400" />
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Tapez une commande, un projet, une technologie..."
-            className="flex-1 bg-transparent text-sm sm:text-base font-medium text-zinc-900 dark:text-white placeholder:text-zinc-400 outline-none"
-          />
-          {query ? (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              aria-label="Effacer la recherche"
-              className="rounded-full p-1 text-zinc-400 hover:text-black dark:hover:text-white"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          ) : (
-            <span className="hidden sm:inline-flex items-center gap-1 rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2 py-0.5 text-[10px] font-mono text-zinc-400">
-              <CommandIcon className="h-3 w-3" />
-              <span>K</span>
-            </span>
-          )}
-        </div>
-
-        {/* Liste des résultats */}
-        <div ref={listRef} className="overflow-y-auto p-2.5 sm:p-3 space-y-1">
-          {filteredCommands.length === 0 ? (
-            <div className="py-12 text-center text-sm text-zinc-500">
-              <p>Aucun résultat correspondant à « {query} »</p>
-              <p className="mt-1 text-xs text-zinc-400">
-                Essayez : Next.js, CV, RDV, Terminal, Thème...
-              </p>
-            </div>
-          ) : (
-            filteredCommands.map((cmd, index) => {
-              const Icon = cmd.icon;
-              const isSelected = index === selectedIndex;
-              return (
-                <div
-                  key={cmd.id}
-                  onClick={() => {
-                    playSound("click");
-                    cmd.action();
-                  }}
-                  onMouseEnter={() => setSelectedIndex(index)}
-                  role="button"
-                  tabIndex={-1}
-                  className={`group flex items-center justify-between gap-3 rounded-2xl px-3.5 py-2.5 text-left cursor-pointer transition-all ${
-                    isSelected
-                      ? "bg-black/5 dark:bg-white/10 text-zinc-900 dark:text-white"
-                      : "text-zinc-600 dark:text-zinc-300 hover:bg-black/5 dark:hover:bg-white/5"
-                  }`}
+    <AnimatePresence>
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-start justify-center p-3 sm:p-6 pt-16 sm:pt-24 bg-black/75 backdrop-blur-md overflow-hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Palette de commandes"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: -15 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96, y: -15 }}
+            transition={{ duration: 0.2 }}
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 dark:border-white/15 bg-white dark:bg-[#10131d] shadow-2xl dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.12)] flex flex-col max-h-[80vh]"
+          >
+            {/* Barre de recherche */}
+            <div className="flex items-center gap-3 border-b border-black/10 dark:border-white/10 px-5 py-4">
+              <Search className="h-5 w-5 text-zinc-400" />
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Tapez une commande, un projet, une technologie..."
+                className="flex-1 bg-transparent text-sm sm:text-base font-medium text-zinc-900 dark:text-white placeholder:text-zinc-400 outline-none"
+              />
+              {query ? (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label="Effacer la recherche"
+                  className="rounded-full p-1 text-zinc-400 hover:text-black dark:hover:text-white"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <X className="h-4 w-4" />
+                </button>
+              ) : (
+                <span className="hidden sm:inline-flex items-center gap-1 rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2 py-0.5 text-[10px] font-mono text-zinc-400">
+                  <CommandIcon className="h-3 w-3" />
+                  <span>K</span>
+                </span>
+              )}
+            </div>
+
+            {/* Liste des résultats */}
+            <div
+              ref={listRef}
+              className="overflow-y-auto p-2.5 sm:p-3 space-y-1"
+            >
+              {filteredCommands.length === 0 ? (
+                <div className="py-12 text-center text-sm text-zinc-500">
+                  <p>Aucun résultat correspondant à « {query} »</p>
+                  <p className="mt-1 text-xs text-zinc-400">
+                    Essayez : Next.js, CV, RDV, Terminal, Thème...
+                  </p>
+                </div>
+              ) : (
+                filteredCommands.map((cmd, index) => {
+                  const Icon = cmd.icon;
+                  const isSelected = index === selectedIndex;
+                  return (
                     <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                      key={cmd.id}
+                      onClick={() => {
+                        playSound("click");
+                        cmd.action();
+                      }}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                      role="button"
+                      tabIndex={-1}
+                      className={`group flex items-center justify-between gap-3 rounded-2xl px-3.5 py-2.5 text-left cursor-pointer transition-all ${
                         isSelected
-                          ? "border-amber-400/40 bg-amber-400/10 text-amber-500"
-                          : "border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.03] text-zinc-400"
+                          ? "bg-black/5 dark:bg-white/10 text-zinc-900 dark:text-white"
+                          : "text-zinc-600 dark:text-zinc-300 hover:bg-black/5 dark:hover:bg-white/5"
                       }`}
                     >
-                      <Icon className="h-4 w-4" />
-                    </div>
-
-                    <div className="min-w-0 truncate">
-                      <div className="text-xs sm:text-sm font-semibold truncate flex items-center gap-2">
-                        <span>{cmd.title}</span>
-                      </div>
-                      {cmd.subtitle && (
-                        <div className="text-[11px] text-zinc-400 truncate">
-                          {cmd.subtitle}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border transition-colors ${
+                            isSelected
+                              ? "border-amber-400/40 bg-amber-400/10 text-amber-500"
+                              : "border-black/5 dark:border-white/5 bg-black/[0.03] dark:bg-white/[0.03] text-zinc-400"
+                          }`}
+                        >
+                          <Icon className="h-4 w-4" />
                         </div>
-                      )}
+
+                        <div className="min-w-0 truncate">
+                          <div className="text-xs sm:text-sm font-semibold truncate flex items-center gap-2">
+                            <span>{cmd.title}</span>
+                          </div>
+                          {cmd.subtitle && (
+                            <div className="text-[11px] text-zinc-400 truncate">
+                              {cmd.subtitle}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        {cmd.badge && (
+                          <span className="hidden sm:inline-block rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2 py-0.5 text-[10px] font-mono text-zinc-500">
+                            {cmd.badge}
+                          </span>
+                        )}
+                        {isSelected && (
+                          <span className="text-xs text-amber-500 font-mono flex items-center gap-0.5">
+                            <span className="hidden sm:inline">Exécuter</span>
+                            <ArrowRight className="h-3 w-3" />
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  );
+                })
+              )}
+            </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    {cmd.badge && (
-                      <span className="hidden sm:inline-block rounded-md border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-2 py-0.5 text-[10px] font-mono text-zinc-500">
-                        {cmd.badge}
-                      </span>
-                    )}
-                    {isSelected && (
-                      <span className="text-xs text-amber-500 font-mono flex items-center gap-0.5">
-                        <span className="hidden sm:inline">Exécuter</span>
-                        <ArrowRight className="h-3 w-3" />
-                      </span>
-                    )}
-                  </div>
-                </div>
-              );
-            })
-          )}
+            {/* Pied : raccourcis clavier */}
+            <div className="border-t border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] px-4 py-2.5 flex items-center justify-between text-[11px] font-mono text-zinc-400">
+              <div className="flex items-center gap-3">
+                <span>↑↓ Navigation</span>
+                <span>↵ Choisir</span>
+                <span>ESC Quitter</span>
+              </div>
+              <span className="text-zinc-500">
+                {filteredCommands.length} action
+                {filteredCommands.length > 1 ? "s" : ""} disponible
+                {filteredCommands.length > 1 ? "s" : ""}
+              </span>
+            </div>
+          </motion.div>
         </div>
-
-        {/* Pied : raccourcis clavier */}
-        <div className="border-t border-black/10 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02] px-4 py-2.5 flex items-center justify-between text-[11px] font-mono text-zinc-400">
-          <div className="flex items-center gap-3">
-            <span>↑↓ Navigation</span>
-            <span>↵ Choisir</span>
-            <span>ESC Quitter</span>
-          </div>
-          <span className="text-zinc-500">
-            {filteredCommands.length} action
-            {filteredCommands.length > 1 ? "s" : ""} disponible
-            {filteredCommands.length > 1 ? "s" : ""}
-          </span>
-        </div>
-      </motion.div>
-    </div>
+      )}
+    </AnimatePresence>
   );
-};
+}
