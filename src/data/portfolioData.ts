@@ -20,7 +20,7 @@ export const initialProfile: UserProfile = {
   linkedin: "https://linkedin.com/in/mikeweda",
   twitter: "https://twitter.com/mikeweda_dev",
   youtube: "https://youtube.com/@mikeweda_tech",
-  avatarUrl: "/assets/portrait.jfif",
+  avatarUrl: "/assets/portrait.jpg",
 };
 
 export const technologies = [

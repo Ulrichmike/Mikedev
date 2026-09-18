@@ -156,7 +156,7 @@ export function ProfileModal({
             <div className="flex items-center gap-3">
               <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl border border-black/15 dark:border-white/15 bg-zinc-900">
                 <Image
-                  src={formData.avatarUrl || "/assets/portrait.jfif"}
+                  src={formData.avatarUrl || "/assets/portrait.jpg"}
                   alt="Aperçu du portrait"
                   width={48}
                   height={48}
@@ -166,7 +166,7 @@ export function ProfileModal({
               </div>
               <input
                 type="text"
-                placeholder="/assets/portrait.jfif ou https://..."
+                placeholder="/assets/portrait.jpg ou https://..."
                 value={formData.avatarUrl || ""}
                 onChange={(e) =>
                   setFormData({ ...formData, avatarUrl: e.target.value })

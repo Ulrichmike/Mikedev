@@ -31,7 +31,7 @@ export function HeroAnimatedPortrait({
     }
   };
 
-  const portraitSrc = profile.avatarUrl || "/assets/portrait.jfif";
+  const portraitSrc = profile.avatarUrl || "/assets/portrait.jpg";
 
   return (
     <motion.div
