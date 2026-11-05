@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 
 import { useTheme } from "@/context/ThemeContext";
-import { projectsData, technologies } from "@/data/portfolioData";
+import { skillGroups } from "@/data/portfolioData";
+import { projectsData, SECTOR_LABELS } from "@/data/projects";
 import type { UserProfile } from "@/types";
 
 interface InteractiveTerminalProps {
@@ -18,7 +19,6 @@ interface InteractiveTerminalProps {
   onClose: () => void;
   profile: UserProfile;
   onOpenBooking: () => void;
-  onOpenChallenge: () => void;
 }
 
 interface CommandHistory {
@@ -31,7 +31,6 @@ export function InteractiveTerminal({
   onClose,
   profile,
   onOpenBooking,
-  onOpenChallenge,
 }: InteractiveTerminalProps) {
   const { toggleTheme } = useTheme();
 
@@ -109,10 +108,6 @@ export function InteractiveTerminal({
                 Déclencher un rendez-vous
               </div>
               <div>
-                <span className="text-amber-400 font-bold">challenge</span> :
-                Lancer le test de code
-              </div>
-              <div>
                 <span className="text-amber-400 font-bold">theme</span> :
                 Alterner mode clair/sombre
               </div>
@@ -133,10 +128,12 @@ export function InteractiveTerminal({
         outputNode = (
           <div className="space-y-2 text-xs">
             <p className="font-bold text-white">
-              {profile.name} — {profile.role}
+              {profile.name} — {profile.title}
             </p>
-            <p className="text-zinc-300">{profile.bio}</p>
-            <p className="text-emerald-400">Statut : {profile.statusText}</p>
+            <p className="text-zinc-300">{profile.intro}</p>
+            <p className="text-emerald-400">
+              {profile.city}, {profile.country} · {profile.availability}
+            </p>
           </div>
         );
         break;
@@ -147,15 +144,12 @@ export function InteractiveTerminal({
             <p className="text-amber-300 font-bold">
               Technologies &amp; Compétences :
             </p>
-            <div className="flex flex-wrap gap-2">
-              {technologies.map((t) => (
-                <span
-                  key={t.name}
-                  className="rounded border border-white/10 bg-white/5 px-2 py-0.5 font-mono text-[11px] text-zinc-300"
-                >
-                  {t.name}{" "}
-                  <span className="text-amber-400 font-bold">({t.level})</span>
-                </span>
+            <div className="space-y-1.5">
+              {skillGroups.map((g) => (
+                <p key={g.id} className="font-mono text-[11px] text-zinc-300">
+                  <span className="text-amber-400 font-bold">{g.title}</span>{" "}
+                  → {g.skills.map((s) => s.name).join(" · ")}
+                </p>
               ))}
             </div>
           </div>
@@ -168,14 +162,14 @@ export function InteractiveTerminal({
             <p className="text-amber-300 font-bold">Projets Récents :</p>
             <div className="space-y-2">
               {projectsData.map((p) => (
-                <div key={p.id} className="border-l-2 border-amber-400/40 pl-2">
-                  <div className="font-bold text-white">
-                    {p.title}{" "}
+                <div key={p.slug} className="border-l-2 border-amber-400/40 pl-2">
+                  <a href={`/projets/${p.slug}`} className="font-bold text-white hover:underline">
+                    {p.index} · {p.name}{" "}
                     <span className="text-zinc-500 font-mono text-[10px]">
-                      [{p.category}]
+                      [{SECTOR_LABELS[p.sector]}]
                     </span>
-                  </div>
-                  <div className="text-zinc-400 text-[11px]">{p.tagline}</div>
+                  </a>
+                  <div className="text-zinc-400 text-[11px]">{p.positioning}</div>
                   <div className="text-zinc-500 text-[10px] font-mono">
                     {p.tags.join(" • ")}
                   </div>
@@ -222,11 +216,6 @@ export function InteractiveTerminal({
       case "hire":
         onClose();
         onOpenBooking();
-        return;
-
-      case "challenge":
-        onClose();
-        onOpenChallenge();
         return;
 
       case "theme":

@@ -202,7 +202,7 @@ const DEFAULT_ACCENT: ThemeAccent = "amber";
 const DEFAULT_DARK_TONE: DarkBgTone = "obsidian";
 const DEFAULT_LIGHT_TONE: LightBgTone = "alabaster";
 const DEFAULT_COSMIC_MODE: CosmicMode = "galaxy";
-const DEFAULT_SOUND = true;
+const DEFAULT_SOUND = false;
 
 /* ============================================================
  * PROVIDER
@@ -306,19 +306,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       root.setAttribute("data-tone", theme === "dark" ? darkTone : lightTone);
       root.setAttribute("data-cosmic", cosmicMode);
 
-      const currentAcc = ACCENT_PALETTES[accent];
-      root.style.setProperty("--accent-color", currentAcc.color);
-      root.style.setProperty("--accent-glow", currentAcc.glow);
-
-      const activeBgColor =
-        theme === "dark" ? DARK_TONES[darkTone].bg : LIGHT_TONES[lightTone].bg;
-      const activeCardColor =
-        theme === "dark"
-          ? DARK_TONES[darkTone].card
-          : LIGHT_TONES[lightTone].card;
-
-      root.style.setProperty("--current-bg", activeBgColor);
-      root.style.setProperty("--current-card", activeCardColor);
+      // Identité figée : couleurs de marque définies dans globals.css
     } catch (err) {
       console.error("[ThemeProvider] Failed to apply theme:", err);
     }

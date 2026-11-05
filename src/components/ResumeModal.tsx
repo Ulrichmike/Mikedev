@@ -10,13 +10,17 @@ import {
   Globe,
   Sparkles,
   Briefcase,
-  GraduationCap,
   Layers,
   Code2,
 } from "lucide-react";
 
 import { useTheme } from "@/context/ThemeContext";
-import { experiencesData, projectsData } from "@/data/portfolioData";
+import {
+  journeySteps,
+  servicesData,
+  skillGroups,
+} from "@/data/portfolioData";
+import { projectsData, STATUS_LABELS } from "@/data/projects";
 import type { UserProfile } from "@/types";
 
 interface ResumeModalProps {
@@ -78,7 +82,7 @@ export function ResumeModal({ isOpen, onClose, profile }: ResumeModalProps) {
             <button
               type="button"
               onClick={handlePrint}
-              className="flex items-center gap-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black px-4 py-1.5 text-xs font-bold transition-all shadow-md active:scale-95"
+              className="flex items-center gap-1.5 rounded-full bg-accent text-accent-fg hover:brightness-110 px-4 py-1.5 text-xs font-bold transition-all shadow-md active:scale-95"
               title="Imprimer ou enregistrer en PDF (Ctrl + P)"
             >
               <Printer className="h-3.5 w-3.5" />
@@ -116,319 +120,135 @@ export function ResumeModal({ isOpen, onClose, profile }: ResumeModalProps) {
           >
             {/* En-tête : Nom, Titre & Coordonnées */}
             <div className="border-b-2 border-zinc-900 pb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-zinc-900 uppercase">
+                  <h1 className="text-3xl font-black uppercase tracking-tight text-zinc-900 sm:text-4xl">
                     {profile.name}
                   </h1>
-                  <p className="mt-1 font-mono text-sm sm:text-base font-bold text-amber-600 tracking-wide uppercase">
-                    {profile.role}
+                  <p className="mt-1 font-mono text-sm font-bold uppercase tracking-wide text-zinc-600">
+                    {profile.title}
                   </p>
-                  <p className="mt-1 text-xs text-zinc-600 font-medium">
-                    {profile.specialty}
-                  </p>
+                  <p className="mt-1 text-xs italic text-zinc-600">{profile.tagline}</p>
                 </div>
 
-                {/* Colonne contact */}
-                <div className="flex flex-col sm:items-end gap-1 text-xs font-mono text-zinc-700">
-                  <div className="flex items-center gap-1.5">
+                <div className="flex flex-col gap-1 font-mono text-xs text-zinc-700 sm:items-end">
+                  <span className="flex items-center gap-1.5">
                     <Mail className="h-3.5 w-3.5 text-zinc-500" />
-                    <span>{profile.email}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
+                    {profile.email}
+                  </span>
+                  <span className="flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5 text-zinc-500" />
-                    <span>{profile.location}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-zinc-500 text-[11px]">
+                    {profile.city}, {profile.country}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-[11px] text-zinc-500">
                     <Globe className="h-3.5 w-3.5" />
-                    <span>github.com/mikeweda · linkedin.com/in/mikeweda</span>
-                  </div>
+                    {[profile.github, profile.linkedin]
+                      .map((u) => u.replace(/^https?:\/\//, ""))
+                      .join(" · ")}
+                  </span>
                 </div>
               </div>
 
-              {/* Résumé exécutif */}
-              <div className="mt-4 rounded-xl bg-zinc-50 p-3.5 text-xs text-zinc-700 leading-relaxed border border-zinc-200/80">
-                <span className="font-bold text-zinc-900">
-                  Profil Exécutif :{" "}
-                </span>
-                {profile.bio} Spécialiste du cycle complet de développement web,
-                de l&apos;élaboration d&apos;architectures résilientes à
-                l&apos;optimisation extrême des performances (Core Web Vitals
-                95+). Culture du code testé, maintenable et aligné sur les
-                objectifs business.
-              </div>
+              <p className="mt-4 text-xs leading-relaxed text-zinc-700">{profile.intro}</p>
+              <p className="mt-2 text-[11px] font-semibold text-zinc-900">
+                {profile.domains.join(" · ")}
+              </p>
             </div>
 
-            {/* Grille : Expériences à gauche, Compétences à droite */}
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-12 gap-8">
-              {/* Colonne gauche : Expériences */}
-              <div className="md:col-span-7 space-y-6">
-                <div>
-                  <div className="flex items-center gap-2 border-b border-zinc-300 pb-1.5 mb-4">
-                    <Briefcase className="h-4 w-4 text-amber-600" />
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
-                      Expériences Professionnelles
-                    </h3>
-                  </div>
-
-                  <div className="space-y-5">
-                    {experiencesData.map((exp) => (
-                      <div
-                        key={exp.id}
-                        className="relative pl-3 border-l-2 border-zinc-300"
-                      >
+            <div className="mt-6 grid grid-cols-1 gap-8 md:grid-cols-12">
+              {/* Colonne gauche : projets & parcours */}
+              <div className="space-y-6 md:col-span-7">
+                <section>
+                  <h3 className="mb-3 flex items-center gap-2 border-b border-zinc-300 pb-1.5 font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
+                    <Layers className="h-4 w-4" />
+                    Projets sélectionnés
+                  </h3>
+                  <div className="space-y-2.5">
+                    {projectsData.map((p) => (
+                      <div key={p.slug} className="border-l-2 border-zinc-300 pl-3">
                         <div className="flex items-baseline justify-between gap-2">
-                          <h4 className="text-sm font-bold text-zinc-900">
-                            {exp.role}
-                          </h4>
-                          <span className="font-mono text-[11px] font-semibold text-zinc-500 whitespace-nowrap">
-                            {exp.period}
+                          <span className="text-sm font-bold text-zinc-900">{p.name}</span>
+                          <span className="font-mono text-[10px] text-zinc-500">
+                            {[p.year, p.status && STATUS_LABELS[p.status]].filter(Boolean).join(" · ")}
                           </span>
                         </div>
+                        <p className="font-mono text-[10.5px] text-zinc-500">{p.positioning}</p>
+                        <p className="mt-0.5 text-[11px] leading-snug text-zinc-700">{p.summary}</p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
 
-                        <div className="text-xs font-medium text-amber-700 font-mono">
-                          {exp.company} · {exp.location}
-                        </div>
+                <section>
+                  <h3 className="mb-3 flex items-center gap-2 border-b border-zinc-300 pb-1.5 font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
+                    <Briefcase className="h-4 w-4" />
+                    Parcours
+                  </h3>
+                  <ol className="space-y-2 text-[11px] text-zinc-700">
+                    {journeySteps.map((step) => (
+                      <li key={step.title}>
+                        <span className="font-bold text-zinc-900">{step.title}</span>
+                        {step.period && (
+                          <span className="font-mono text-zinc-500"> · {step.period}</span>
+                        )}{" "}
+                        — {step.description}
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              </div>
 
-                        <p className="mt-1.5 text-xs text-zinc-600 leading-snug">
-                          {exp.description}
-                        </p>
+              {/* Colonne droite : services & compétences */}
+              <div className="space-y-6 md:col-span-5">
+                <section>
+                  <h3 className="mb-3 flex items-center gap-2 border-b border-zinc-300 pb-1.5 font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
+                    <Sparkles className="h-4 w-4" />
+                    Services
+                  </h3>
+                  <ul className="space-y-1 text-[11px] text-zinc-700">
+                    {servicesData.map((s) => (
+                      <li key={s.id}>
+                        <span className="font-semibold text-zinc-900">{s.title}</span> — {s.description}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
 
-                        <ul className="mt-2 space-y-1 text-[11.5px] text-zinc-700">
-                          {exp.achievements.map((ach, i) => (
-                            <li key={i} className="flex items-start gap-1.5">
-                              <span
-                                aria-hidden="true"
-                                className="text-amber-500 font-bold"
-                              >
-                                •
-                              </span>
-                              <span>{ach}</span>
-                            </li>
-                          ))}
-                        </ul>
-
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {exp.technologies.map((t) => (
+                <section>
+                  <h3 className="mb-3 flex items-center gap-2 border-b border-zinc-300 pb-1.5 font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
+                    <Code2 className="h-4 w-4" />
+                    Compétences techniques
+                  </h3>
+                  <div className="space-y-2.5">
+                    {skillGroups.map((g) => (
+                      <div key={g.id}>
+                        <span className="mb-1 block font-mono text-[10.5px] font-bold uppercase text-zinc-700">
+                          {g.title}
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {g.skills.map((sk) => (
                             <span
-                              key={t}
-                              className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-mono text-zinc-700 border border-zinc-200"
+                              key={sk.name}
+                              className="rounded border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10.5px]"
                             >
-                              {t}
+                              {sk.name}
                             </span>
                           ))}
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                </section>
 
-                {/* Projets clés */}
-                <div>
-                  <div className="flex items-center gap-2 border-b border-zinc-300 pb-1.5 mb-3">
-                    <Layers className="h-4 w-4 text-amber-600" />
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
-                      Projets Clés en Ligne
-                    </h3>
-                  </div>
-
-                  <div className="space-y-2.5 text-xs">
-                    {projectsData.slice(0, 3).map((proj) => (
-                      <div
-                        key={proj.id}
-                        className="rounded-lg bg-zinc-50 p-2.5 border border-zinc-200/80"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-zinc-900">
-                            {proj.title.split("—")[0].trim()}
-                          </span>
-                          <span className="font-mono text-[10px] text-emerald-700 font-semibold">
-                            {proj.metrics}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-zinc-600 mt-0.5">
-                          {proj.tagline}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Colonne droite : Compétences & Formation */}
-              <div className="md:col-span-5 space-y-6">
-                {/* Compétences techniques */}
-                <div>
-                  <div className="flex items-center gap-2 border-b border-zinc-300 pb-1.5 mb-4">
-                    <Code2 className="h-4 w-4 text-amber-600" />
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
-                      Compétences Techniques
-                    </h3>
-                  </div>
-
-                  <div className="space-y-3 text-xs">
-                    <div>
-                      <span className="font-mono font-bold text-[11px] text-zinc-700 block mb-1">
-                        LANGAGES &amp; FONDATIONS :
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {[
-                          "TypeScript",
-                          "JavaScript (ESNext)",
-                          "SQL",
-                          "HTML5 / CSS3",
-                          "GraphQL",
-                        ].map((s) => (
-                          <span
-                            key={s}
-                            className="rounded bg-zinc-100 px-2 py-0.5 text-[10.5px] font-mono border border-zinc-200"
-                          >
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="font-mono font-bold text-[11px] text-zinc-700 block mb-1">
-                        FRONTEND &amp; UI CRAFT :
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {[
-                          "React 19",
-                          "Next.js 15 (App Router)",
-                          "Tailwind CSS",
-                          "Vite",
-                          "Zustand",
-                          "Framer Motion",
-                        ].map((s) => (
-                          <span
-                            key={s}
-                            className="rounded bg-zinc-100 px-2 py-0.5 text-[10.5px] font-mono border border-zinc-200"
-                          >
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="font-mono font-bold text-[11px] text-zinc-700 block mb-1">
-                        BACKEND &amp; DONNÉES :
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {[
-                          "Node.js",
-                          "Express",
-                          "PostgreSQL",
-                          "Supabase",
-                          "Redis",
-                          "RESTful APIs",
-                        ].map((s) => (
-                          <span
-                            key={s}
-                            className="rounded bg-zinc-100 px-2 py-0.5 text-[10.5px] font-mono border border-zinc-200"
-                          >
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="font-mono font-bold text-[11px] text-zinc-700 block mb-1">
-                        DEVOPS, TESTS &amp; PERFORMANCE :
-                      </span>
-                      <div className="flex flex-wrap gap-1">
-                        {[
-                          "Docker",
-                          "CI/CD GitHub Actions",
-                          "Vitest / Jest",
-                          "Core Web Vitals",
-                          "Figma",
-                        ].map((s) => (
-                          <span
-                            key={s}
-                            className="rounded bg-zinc-100 px-2 py-0.5 text-[10.5px] font-mono border border-zinc-200"
-                          >
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Formation */}
-                <div>
-                  <div className="flex items-center gap-2 border-b border-zinc-300 pb-1.5 mb-3">
-                    <GraduationCap className="h-4 w-4 text-amber-600" />
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
-                      Formation &amp; Diplômes
-                    </h3>
-                  </div>
-
-                  <div className="space-y-3 text-xs">
-                    <div>
-                      <div className="font-bold text-zinc-900">
-                        Master 2 / Titre d&apos;Ingénieur Logiciel
-                      </div>
-                      <div className="text-[11px] text-zinc-600">
-                        Spécialisation Systèmes d&apos;Information &amp; Web
-                      </div>
-                      <div className="font-mono text-[10px] text-zinc-500">
-                        2018 — 2021 · Mention Très Bien
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-bold text-zinc-900">
-                        Licence Informatique Générale
-                      </div>
-                      <div className="text-[11px] text-zinc-600">
-                        Algorithmique, Structures de Données &amp; Réseaux
-                      </div>
-                      <div className="font-mono text-[10px] text-zinc-500">
-                        2015 — 2018
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Langues & Soft Skills */}
-                <div>
-                  <div className="flex items-center gap-2 border-b border-zinc-300 pb-1.5 mb-3">
-                    <Sparkles className="h-4 w-4 text-amber-600" />
-                    <h3 className="font-mono text-xs font-black uppercase tracking-wider text-zinc-900">
-                      Langues &amp; Atouts
-                    </h3>
-                  </div>
-
-                  <div className="space-y-1.5 text-xs text-zinc-700">
-                    <div className="flex justify-between">
-                      <span>Français :</span>
-                      <span className="font-mono font-semibold">
-                        Langue Maternelle
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Anglais :</span>
-                      <span className="font-mono font-semibold">
-                        Courant / Technique (C1)
-                      </span>
-                    </div>
-                    <div className="mt-2 pt-2 border-t border-zinc-200 text-[11px] text-zinc-600">
-                      Disponibilité immédiate en freelance, télétravail complet
-                      ou déplacements ponctuels sur Paris.
-                    </div>
-                  </div>
-                </div>
+                <p className="border-t border-zinc-200 pt-3 text-[11px] text-zinc-600">
+                  {profile.availability} · {profile.city}, {profile.country}
+                </p>
               </div>
             </div>
 
-            {/* Cachet de pied de page */}
-            <div className="mt-8 border-t border-zinc-200 pt-4 flex items-center justify-between text-[10px] font-mono text-zinc-400">
-              <span>{profile.name} — Dossier de compétences certifié</span>
-              <span>Dernière mise à jour : 2025/2026</span>
+            <div className="mt-8 flex items-center justify-between border-t border-zinc-200 pt-4 font-mono text-[10px] text-zinc-400">
+              <span>{profile.name} — {profile.title}</span>
+              <span>{profile.email}</span>
             </div>
           </div>
         </div>

@@ -1,35 +1,24 @@
-import type { Metadata } from "next";
-import {
-  Plus_Jakarta_Sans,
-  Instrument_Serif,
-  JetBrains_Mono,
-} from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 
 import { ThemeProvider } from "@/context/ThemeContext";
+import { ModalProvider } from "@/context/ModalContext";
 
 import "./globals.css";
-import { ModalProvider } from "@/context/ModalContext";
-import Script from "next/script";
 
 /* ============================================================
  * CHARGEMENT DES POLICES (auto-hébergées, 0 requête Google)
  * ============================================================ */
-const jakarta = Plus_Jakarta_Sans({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-jakarta",
+  variable: "--font-geist",
   display: "swap",
 });
 
-const instrument = Instrument_Serif({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-instrument",
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains",
+  variable: "--font-geist-mono",
   display: "swap",
 });
 
@@ -37,15 +26,47 @@ const jetbrains = JetBrains_Mono({
  * MÉTADONNÉES
  * ============================================================ */
 export const metadata: Metadata = {
-  title: "Mike Weda · Portfolio Full-Stack",
-  description:
-    "Développeur Full-Stack & Tech Creator. Architectures web robustes, SaaS à fort impact, interfaces produit d'exception.",
-  authors: [{ name: "Mike Weda" }],
-  openGraph: {
-    title: "Mike Weda · Portfolio Full-Stack",
-    description: "Développeur Full-Stack & Tech Creator.",
-    type: "website",
+  // Définir NEXT_PUBLIC_SITE_URL en production (ex. https://mikeweda.dev)
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  ),
+  title: {
+    default: "Mike Weda · Digital Product Builder",
+    template: "%s · Mike Weda",
   },
+  description:
+    "I design, engineer and build digital products that solve real-world problems. Product engineering, SaaS et développement full-stack depuis Douala, Cameroun.",
+  keywords: [
+    "Digital Product Builder",
+    "Product Engineering",
+    "Développeur Full-Stack",
+    "SaaS",
+    "Next.js",
+    "React",
+    "Douala",
+    "Cameroun",
+  ],
+  authors: [{ name: "Mike Weda" }],
+  creator: "Mike Weda",
+  openGraph: {
+    title: "Mike Weda · Digital Product Builder",
+    description:
+      "I design, engineer and build digital products that solve real-world problems.",
+    type: "website",
+    locale: "fr_FR",
+    images: [{ url: "/assets/portrait.jpg", alt: "Portrait de Mike Weda" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mike Weda · Digital Product Builder",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#09090b" },
+    { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
+  ],
 };
 
 export default function RootLayout({
@@ -56,11 +77,10 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${jakarta.variable} ${instrument.variable} ${jetbrains.variable}`}
+      className={`${geist.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
       <head>
-        {/* ✅ next/script au lieu de <script> */}
         <Script
           id="theme-init"
           strategy="beforeInteractive"
@@ -86,7 +106,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className="bg-noise">
         <ThemeProvider>
           <ModalProvider>{children}</ModalProvider>
         </ThemeProvider>

@@ -5,32 +5,28 @@ import {
   Search,
   Layers,
   ArrowRight,
-  ExternalLink,
   Copy,
   Check,
   Moon,
   Sun,
   Volume2,
   VolumeX,
-  Palette,
   Terminal,
-  Trophy,
   Calendar,
   FileText,
   Sparkles,
   Command as CommandIcon,
   X,
   Briefcase,
-  ShieldCheck,
   Code2,
-  Grid,
   Compass,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useRouter } from "next/navigation";
 
 import { GithubIcon, LinkedinIcon } from "@/components/icons/BrandIcons";
 import { useTheme } from "@/context/ThemeContext";
-import { projectsData } from "@/data/portfolioData";
+import { projectsData } from "@/data/projects";
 import type { UserProfile, Project } from "@/types";
 
 interface CommandPaletteModalProps {
@@ -38,7 +34,6 @@ interface CommandPaletteModalProps {
   onClose: () => void;
   profile: UserProfile;
   onOpenBooking: () => void;
-  onOpenChallenge: () => void;
   onOpenTerminal: () => void;
   onOpenResume: () => void;
 }
@@ -47,7 +42,7 @@ interface CommandItem {
   id: string;
   category:
     | "Navigation"
-    | "Projets Live"
+    | "Projets"
     | "Actions & Profil"
     | "Thème & Audio";
   title: string;
@@ -62,23 +57,18 @@ export function CommandPaletteModal({
   onClose,
   profile,
   onOpenBooking,
-  onOpenChallenge,
   onOpenTerminal,
   onOpenResume,
 }: CommandPaletteModalProps) {
   const {
     theme,
     toggleTheme,
-    accent,
-    setAccent,
-    cosmicMode,
-    setCosmicMode,
-    openThemeModal,
     soundEnabled,
     toggleSound,
     playSound,
   } = useTheme();
 
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -113,7 +103,8 @@ export function CommandPaletteModal({
     onClose();
     setTimeout(() => {
       const el = document.getElementById(id);
-      el?.scrollIntoView({ behavior: "smooth" });
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      else router.push(`/#${id}`);
     }, 100);
   };
 
@@ -125,62 +116,49 @@ export function CommandPaletteModal({
     {
       id: "nav-top",
       category: "Navigation",
-      title: "Accueil & Présentation",
-      subtitle: "Haut de page et résumé exécutif",
+      title: "Accueil",
+      subtitle: `${profile.name} — ${profile.title}`,
       icon: Sparkles,
       action: () => scrollTo("top"),
     },
     {
+      id: "nav-services",
+      category: "Navigation",
+      title: "Ce que je construis",
+      subtitle: "SaaS, applications web, e-commerce, backend…",
+      icon: Code2,
+      action: () => scrollTo("services"),
+    },
+    {
       id: "nav-projets",
       category: "Navigation",
-      title: "Réalisations & Projets",
-      subtitle: "Applications déployées et démonstrations réelles",
+      title: "Projets sélectionnés",
+      subtitle: "Six produits, six facettes",
       icon: Layers,
       action: () => scrollTo("projets"),
       badge: "Section",
     },
     {
-      id: "nav-offres",
+      id: "nav-approche",
       category: "Navigation",
-      title: "Formules Clé-en-Main & Tarifs",
-      subtitle: "Délais fermes, livrables et garanties",
-      icon: ShieldCheck,
-      action: () => scrollTo("offres"),
-      badge: "Section",
+      title: "Ma méthode",
+      subtitle: "De la découverte au lancement",
+      icon: Compass,
+      action: () => scrollTo("approche"),
     },
     {
-      id: "nav-defi",
+      id: "nav-about",
       category: "Navigation",
-      title: "Le Défi Développeur (Speed Coding & Bug Hunter)",
-      subtitle: "Testez votre vélocité face au développeur",
-      icon: Trophy,
-      action: () => {
-        onClose();
-        onOpenChallenge();
-      },
-      badge: "Jeu",
-    },
-    {
-      id: "nav-services",
-      category: "Navigation",
-      title: "Services & Expertises",
-      subtitle: "Architecture, Craft UI/UX, Performance et Conseil",
-      icon: Code2,
-      action: () => scrollTo("services"),
-    },
-    {
-      id: "nav-parcours",
-      category: "Navigation",
-      title: "Parcours & Chronologie",
-      subtitle: "Expériences, postes occupés et réalisations clés",
+      title: "À propos & parcours",
+      subtitle: "Philosophie, différences et parcours",
       icon: Briefcase,
-      action: () => scrollTo("parcours"),
+      action: () => scrollTo("a-propos"),
     },
     {
       id: "nav-contact",
       category: "Navigation",
-      title: "Prendre Rendez-vous / Formulaire de Contact",
-      subtitle: "Planifier un appel visio gratuit de 30 min",
+      title: "Discuter d'un projet",
+      subtitle: "Réserver une visio ou envoyer un brief",
       icon: Calendar,
       action: () => {
         onClose();
@@ -189,23 +167,19 @@ export function CommandPaletteModal({
       badge: "Direct",
     },
 
-    // ---------- Projets Live ----------
+    // ---------- Projets ----------
     ...projectsData.map(
       (project: Project): CommandItem => ({
-        id: `proj-${project.id}`,
-        category: "Projets Live",
-        title: project.title,
-        subtitle: `${project.tagline} (${
-          project.domainName || project.tags.join(", ")
-        })`,
-        icon: ExternalLink,
+        id: `proj-${project.slug}`,
+        category: "Projets",
+        title: `${project.index} · ${project.name}`,
+        subtitle: project.positioning,
+        icon: ArrowRight,
         action: () => {
           onClose();
-          if (project.liveUrl) {
-            window.open(project.liveUrl, "_blank", "noopener,noreferrer");
-          }
+          router.push(`/projets/${project.slug}`);
         },
-        badge: project.domainName || "Live App",
+        badge: "Étude de cas",
       }),
     ),
 
@@ -300,117 +274,6 @@ export function CommandPaletteModal({
         }
       },
       badge: soundEnabled ? "Sons ON" : "Sons OFF",
-    },
-    {
-      id: "theme-studio",
-      category: "Thème & Audio",
-      title: "Ouvrir le Studio de Thèmes & Couleurs",
-      subtitle: "Personnaliser nuances de noir et palettes d'accent",
-      icon: Palette,
-      action: () => {
-        onClose();
-        openThemeModal();
-      },
-      badge: "Couleurs",
-    },
-    {
-      id: "accent-amber",
-      category: "Thème & Audio",
-      title: "Palette d'accent : Or & Ambre",
-      subtitle: "Couleur noble et chaleureuse #f59e0b",
-      icon: Sparkles,
-      action: () => {
-        playSound("tab");
-        setAccent("amber");
-      },
-      badge: accent === "amber" ? "Actif" : undefined,
-    },
-    {
-      id: "accent-emerald",
-      category: "Thème & Audio",
-      title: "Palette d'accent : Émeraude & Menthe",
-      subtitle: "Teinte moderne et vivante #10b981",
-      icon: Sparkles,
-      action: () => {
-        playSound("tab");
-        setAccent("emerald");
-      },
-      badge: accent === "emerald" ? "Actif" : undefined,
-    },
-    {
-      id: "accent-purple",
-      category: "Thème & Audio",
-      title: "Palette d'accent : Cyber Violet",
-      subtitle: "Inspiration high-tech #a855f7",
-      icon: Sparkles,
-      action: () => {
-        playSound("tab");
-        setAccent("purple");
-      },
-      badge: accent === "purple" ? "Actif" : undefined,
-    },
-    {
-      id: "accent-blue",
-      category: "Thème & Audio",
-      title: "Palette d'accent : Azur Électrique",
-      subtitle: "Bleu cobalt studio #3b82f6",
-      icon: Sparkles,
-      action: () => {
-        playSound("tab");
-        setAccent("blue");
-      },
-      badge: accent === "blue" ? "Actif" : undefined,
-    },
-    {
-      id: "accent-rose",
-      category: "Thème & Audio",
-      title: "Palette d'accent : Carmin Avant-Garde",
-      subtitle: "Carmin vibrant et moderne #f43f5e",
-      icon: Sparkles,
-      action: () => {
-        playSound("tab");
-        setAccent("rose");
-      },
-      badge: accent === "rose" ? "Actif" : undefined,
-    },
-
-    // ---------- Ambiance spatiale ----------
-    {
-      id: "space-galaxy",
-      category: "Thème & Audio",
-      title: "Espace : Nébuleuse & Voie Lactée",
-      subtitle: "Lueurs galactiques, poussière cosmique et comètes régulières",
-      icon: Sparkles,
-      action: () => {
-        playSound("switch");
-        setCosmicMode("galaxy");
-      },
-      badge: cosmicMode === "galaxy" ? "Cosmos Actif" : undefined,
-    },
-    {
-      id: "space-matrix",
-      category: "Thème & Audio",
-      title: "Espace : Cyber-Grille & Perspective",
-      subtitle: "Quadrillage spatial 3D avec micro-repères de visée et warp",
-      icon: Grid,
-      action: () => {
-        playSound("switch");
-        setCosmicMode("matrix");
-      },
-      badge: cosmicMode === "matrix" ? "Cosmos Actif" : undefined,
-    },
-    {
-      id: "space-deep-space",
-      category: "Thème & Audio",
-      title: "Espace : Cosmos & Constellations",
-      subtitle:
-        "Champ d'étoiles haute densité et liens de constellations à la souris",
-      icon: Compass,
-      action: () => {
-        playSound("switch");
-        setCosmicMode("deep-space");
-      },
-      badge: cosmicMode === "deep-space" ? "Cosmos Actif" : undefined,
     },
   ];
 
