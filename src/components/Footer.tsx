@@ -59,9 +59,11 @@ export function Footer({ profile }: { profile: UserProfile }) {
         </div>
       </div>
 
+      {/* Signature : les lettres s'éclairent sous le curseur */}
       <p
         aria-hidden="true"
-        className="text-shine select-none whitespace-nowrap text-center text-[17vw] font-semibold leading-[0.8] tracking-[-0.07em] opacity-80"
+        data-torch
+        className="text-torch select-none whitespace-nowrap text-center text-[17vw] font-semibold leading-[0.8] tracking-[-0.07em]"
       >
         {profile.name}
       </p>

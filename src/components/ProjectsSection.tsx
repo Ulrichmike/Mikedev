@@ -14,8 +14,14 @@ import { ArrowUpRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ProjectCover } from "@/components/ui/ProjectCover";
 import { BrowserFrame, PhoneFrame } from "@/components/ui/Devices";
+import { Tilt } from "@/components/ui/Tilt";
 import { projectsData, SECTOR_LABELS } from "@/data/projects";
 import type { Project } from "@/types";
+
+const NUMBERS: Record<number, string> = {
+  1: "un", 2: "deux", 3: "trois", 4: "quatre", 5: "cinq", 6: "six", 7: "sept", 8: "huit", 9: "neuf", 10: "dix",
+};
+const capitalize = (w: string) => w.charAt(0).toUpperCase() + w.slice(1);
 
 /**
  * Projets en grandes cartes qui s'empilent au scroll :
@@ -25,6 +31,7 @@ export function ProjectsSection() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const n = projectsData.length;
+  const live = projectsData.filter((p) => p.url).length;
 
   return (
     <section id="projets" className="py-16 md:py-24">
@@ -33,10 +40,11 @@ export function ProjectsSection() {
           label="Projets sélectionnés"
           title={
             <>
-              Six produits. <span className="text-muted">Cinq déjà en ligne.</span>
+              {capitalize(NUMBERS[n] ?? String(n))} produits.{" "}
+              <span className="text-muted">{capitalize(NUMBERS[live] ?? String(live))} déjà en ligne.</span>
             </>
           }
-          intro="Un SaaS événementiel, une plateforme d'apprentissage, une marque de mode, une école, un fournisseur B2B et une application de mobilité."
+          intro="Un SaaS événementiel, une plateforme éducative, une marque de mode, un fournisseur B2B et une application de mobilité."
         />
 
         <div ref={ref} className="relative mt-14">
@@ -76,7 +84,7 @@ function ProjectCard({
     <div className="mb-6 md:sticky md:h-[min(78vh,660px)]" style={{ top: `${96 + index * 14}px` }}>
       <motion.article
         style={reduce ? undefined : { scale, transformOrigin: "top center" }}
-        className="relative h-full overflow-hidden rounded-[2rem] border border-line bg-surface"
+        className="glow-border relative h-full overflow-hidden rounded-[2rem] border border-line bg-surface"
       >
         {/* Teinte du projet */}
         <div
@@ -123,7 +131,7 @@ function ProjectCard({
             <div className="mt-auto flex flex-wrap gap-3 pt-8">
               <Link
                 href={`/projets/${project.slug}`}
-                className="inline-flex items-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-canvas transition-transform hover:scale-[1.03]"
+                className="btn-shine inline-flex items-center gap-2 rounded-xl bg-ink px-5 py-3 text-sm font-semibold text-canvas transition-transform hover:scale-[1.03]"
               >
                 Étude de cas
                 <ArrowUpRight className="h-4 w-4" />
@@ -148,24 +156,32 @@ function ProjectCard({
             aria-label={`Étude de cas ${project.name}`}
             className="group relative flex items-center"
           >
-            {project.heroVisual ? (
-              <>
-                <BrowserFrame
-                  src={project.heroVisual}
-                  alt={`${project.name} — capture du site`}
-                  url={project.url}
-                  className="w-full transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-1.5"
-                />
-                {mobile && (
-                  <PhoneFrame
-                    src={mobile}
-                    alt={`${project.name} sur mobile`}
-                    className="absolute -bottom-4 -right-2 w-[26%] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-4 md:-right-4"
+            <Tilt className="w-full">
+              {project.heroVisual ? (
+                <>
+                  <BrowserFrame
+                    src={project.heroVisual}
+                    full={project.fullVisual}
+                    alt={`${project.name} — capture du site`}
+                    url={project.url}
+                    className="w-full"
                   />
-                )}
-              </>
-            ) : (
-              <ProjectCover project={project} className="aspect-[16/10] w-full rounded-xl" />
+                  {mobile && (
+                    <PhoneFrame
+                      src={mobile}
+                      alt={`${project.name} sur mobile`}
+                      className="absolute -bottom-4 -right-2 w-[26%] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] [transform:translateZ(40px)] group-hover:-translate-y-5 group-hover:rotate-[-3deg] md:-right-4"
+                    />
+                  )}
+                </>
+              ) : (
+                <ProjectCover project={project} className="aspect-[16/10] w-full rounded-xl" />
+              )}
+            </Tilt>
+            {project.fullVisual && (
+              <span className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[11px] text-white/80 opacity-0 backdrop-blur transition-opacity duration-500 group-hover:opacity-100">
+                Survolez : la page défile
+              </span>
             )}
           </Link>
         </div>

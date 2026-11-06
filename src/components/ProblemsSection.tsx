@@ -17,7 +17,7 @@ const STORIES = [
     problem: "Des organisateurs d'événements qui jonglent entre des outils qui ne se parlent pas.",
   },
   {
-    slug: "last",
+    slug: "learning-academy",
     problem: "Des élèves qui peinent à trouver des ressources classées par classe et par niveau.",
   },
   {
@@ -51,7 +51,7 @@ export function ProblemsSection() {
                 <Link
                   href={`/projets/${slug}`}
                   onMouseMove={trackSpot}
-                  className="card spot group flex h-full flex-col overflow-hidden"
+                  className="card card-lift group flex h-full flex-col overflow-hidden"
                 >
                   <div className="p-6">
                     <p className="label">Le problème</p>

@@ -133,7 +133,7 @@ export function CommandPaletteModal({
       id: "nav-projets",
       category: "Navigation",
       title: "Projets sélectionnés",
-      subtitle: "Six produits, six facettes",
+      subtitle: `${projectsData.length} produits, ${projectsData.length} facettes`,
       icon: Layers,
       action: () => scrollTo("projets"),
       badge: "Section",

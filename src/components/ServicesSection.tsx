@@ -46,7 +46,7 @@ export function ServicesSection() {
                 key={s.id}
                 variants={staggerItem}
                 onMouseMove={trackSpot}
-                className={`card spot group flex flex-col overflow-hidden ${layout.span}`}
+                className={`card card-lift group flex flex-col overflow-hidden ${layout.span}`}
               >
                 <div className="flex flex-1 flex-col p-6 md:p-7">
                   <h3 className="text-xl font-semibold tracking-[-0.02em]">{s.title}</h3>

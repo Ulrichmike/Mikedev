@@ -112,7 +112,7 @@ export const servicesData: Service[] = [
       "Plans & abonnements",
       "Tableaux de bord",
     ],
-    proof: ["eventage", "last"],
+    proof: ["eventage", "learning-academy"],
   },
   {
     id: "webapp",
@@ -130,7 +130,7 @@ export const servicesData: Service[] = [
       "Gestion des utilisateurs",
       "Intégrations tierces",
     ],
-    proof: ["last", "road-alert"],
+    proof: ["learning-academy", "road-alert"],
   },
   {
     id: "product-engineering",
@@ -200,7 +200,7 @@ export const servicesData: Service[] = [
       "Intégration Mobile Money & carte",
       "Base de données PostgreSQL",
     ],
-    proof: ["last", "road-alert"],
+    proof: ["learning-academy", "road-alert"],
   },
   {
     id: "strategy",

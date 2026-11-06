@@ -37,6 +37,7 @@ export const projectsData: Project[] = [
       "Billetterie avec suivi des encaissements Mobile Money.",
     ],
     heroVisual: "/projects/eventage/home-desktop.webp",
+    fullVisual: { src: "/projects/eventage/full-desktop.webp", width: 1200, height: 4333 },
     problem: [
       "Les organisateurs d'événements jonglent avec des outils déconnectés pour gérer invités, billets, prestataires, programme et budget.",
       "Chaque outil détient une partie de l'information : rien n'est synchronisé, les erreurs se multiplient et l'expérience des invités en pâtit.",
@@ -81,63 +82,73 @@ export const projectsData: Project[] = [
 
   /* ---------------------------------------------------------- */
   {
-    slug: "last",
+    slug: "learning-academy",
     index: "02",
-    name: "LAST",
-    positioning: "Learning & Assessment Subscription Platform",
+    name: "Learning Academy",
+    positioning: "Learning & Assessment Platform",
     summary:
-      "Une plateforme éducative avec bibliothèque de ressources, évaluations scolaires, abonnements et gestion des accès par niveau.",
-    tags: ["EdTech", "Subscription", "Product Engineering"],
+      "Une plateforme éducative complète : répétiteurs à domicile, bibliothèque de ressources et d'évaluations par classe et par niveau, abonnements et paiement Mobile Money. Elle repose sur LAST (Learning Academy Soft Teaching), le moteur que j'ai conçu pour les contenus et les accès.",
+    tags: ["EdTech", "Subscription", "Conversion", "Product Engineering"],
     tier: "featured",
     sector: "edtech",
     color: "#2a62c9",
-    audience: "Élèves des sections francophone et anglophone",
-    url: "https://www.belearningacademy.com/fr/resources",
+    audience: "Familles et élèves des sections francophone et anglophone",
+    url: "https://www.belearningacademy.com/",
     status: "production",
     stack: ["Next.js", "TypeScript", "Prisma", "PostgreSQL", "Supabase", "next-intl (FR/EN)", "React PDF", "Cloudinary", "Resend", "Stripe", "Mobile Money"],
     results: [
-      "Plateforme en ligne, intégrée au site Learning Academy.",
+      "Plateforme en ligne, bilingue français / anglais.",
+      "Deux offres claires : répétiteurs à domicile et ressources pédagogiques.",
       "Espace élève avec connexion par email ou Google.",
       "Paiement par Mobile Money et Orange Money.",
+      "Conversion directe : boutons WhatsApp et appel visibles sur chaque page.",
     ],
-    heroVisual: "/projects/learning-academy/subjects-desktop.webp",
+    heroVisual: "/projects/learning-academy/home-desktop.webp",
+    fullVisual: { src: "/projects/learning-academy/full-desktop.webp", width: 1200, height: 4333 },
     problem: [
       "Les ressources pédagogiques et les évaluations sont dispersées, difficiles à trouver et rarement organisées par classe et par niveau.",
+      "Les familles hésitent à confier la scolarité de leurs enfants sans comprendre clairement l'offre, ni avoir de raisons de faire confiance.",
       "Proposer ces contenus en ligne suppose de contrôler qui y accède, et d'accepter les moyens de paiement réellement utilisés localement.",
     ],
     vision: [
-      "Une bibliothèque structurée par section, classe, niveau et catégorie d'évaluation.",
+      "Une seule plateforme pour deux besoins : l'accompagnement à domicile et les ressources en ligne.",
+      "Une bibliothèque structurée par section, classe, niveau et catégorie d'évaluation, propulsée par LAST.",
       "Un modèle d'abonnement (mensuel, trimestriel, annuel) qui conditionne l'accès aux ressources.",
-      "Des paiements Mobile Money et carte bancaire pour lever la barrière de l'accès.",
+      "Rassurer les familles et transformer une visite en demande de contact, notamment via WhatsApp.",
     ],
     features: [
+      { title: "Répétiteurs à domicile", description: "Présentation de l'accompagnement, des matières et des niveaux." },
       { title: "Bibliothèque de ressources", description: "Ressources pédagogiques organisées et consultables." },
       { title: "Sections FR / EN", description: "Navigation par section francophone et anglophone." },
       { title: "Classes & niveaux", description: "Contenus organisés par classe et niveau scolaire." },
       { title: "Catégories d'évaluations", description: "Évaluations classées par type." },
       { title: "Abonnements", description: "Formules mensuelles, trimestrielles et annuelles." },
       { title: "Accès conditionnel", description: "Ressources débloquées selon l'abonnement." },
-      { title: "Gestion des utilisateurs" },
-      { title: "Espace administrateur" },
       { title: "Documents PDF", description: "Gestion et diffusion des documents." },
-      { title: "Paiements", description: "Mobile Money et carte bancaire." },
+      { title: "Paiements", description: "Mobile Money, Orange Money et carte bancaire." },
       { title: "Expirations", description: "Suivi des abonnements et de leurs échéances." },
+      { title: "Espace élève & administrateur", description: "Gestion des utilisateurs et des contenus." },
+      { title: "WhatsApp & appel", description: "Canaux de conversion visibles sur chaque page." },
     ],
     demonstrates: [
-      "Gérer des abonnements par niveau scolaire.",
-      "Contrôler finement l'accès aux contenus.",
-      "Organiser et administrer des contenus éducatifs.",
+      "Concevoir une plateforme qui sert à la fois la vente d'un service et la diffusion de contenus.",
+      "Gérer des abonnements par niveau scolaire et contrôler finement l'accès aux contenus.",
       "Intégrer des paiements adaptés au marché local.",
+      "Transformer une visite en demande de contact.",
     ],
     visuals: [
+      { src: "/projects/learning-academy/home-desktop.webp", caption: "Page d'accueil", kind: "desktop" },
       { src: "/projects/learning-academy/subjects-desktop.webp", caption: "Les deux services : répétiteurs et ressources PDF", kind: "desktop" },
-      { src: "/projects/last/login-desktop.webp", caption: "Connexion à l'espace élève", kind: "desktop" },
+      { src: "/projects/last/login-desktop.webp", caption: "Connexion à l'espace élève (LAST)", kind: "desktop" },
+      { src: "/projects/learning-academy/home-mobile.webp", caption: "Version mobile", kind: "mobile" },
+      { src: "/projects/learning-academy/subjects-mobile.webp", caption: "Services sur mobile", kind: "mobile" },
       { src: "/projects/last/login-mobile.webp", caption: "Espace élève sur mobile", kind: "mobile" },
       { caption: "Catalogue des ressources (connecté)", kind: "desktop" },
       { caption: "Interface d'abonnement", kind: "desktop" },
       { caption: "Dashboard administrateur", kind: "desktop" },
     ],
   },
+
 
   /* ---------------------------------------------------------- */
   {
@@ -162,6 +173,7 @@ export const projectsData: Project[] = [
       "Fiches produits détaillées : galerie, coloris, tailles, broderies.",
     ],
     heroVisual: "/projects/africa-elite-club/home-desktop.webp",
+    fullVisual: { src: "/projects/africa-elite-club/full-desktop.webp", width: 1200, height: 4244 },
     problem: [
       "Une marque premium ne se vend pas comme un simple catalogue : sans univers visuel ni récit, le produit perd sa valeur perçue.",
     ],
@@ -191,60 +203,11 @@ export const projectsData: Project[] = [
     ],
   },
 
-  /* ---------------------------------------------------------- */
-  {
-    slug: "learning-academy",
-    index: "04",
-    name: "Learning Academy",
-    positioning: "Digital Education & Customer Acquisition",
-    summary:
-      "Une présence digitale destinée à présenter des services d'accompagnement scolaire, rassurer les familles et générer des demandes de contact.",
-    tags: ["Education", "Digital Strategy", "Conversion", "Web Design"],
-    tier: "standard",
-    sector: "edtech",
-    color: "#1d6e50",
-    audience: "Familles et élèves",
-    url: "https://www.belearningacademy.com/",
-    status: "production",
-    results: [
-      "Site en ligne, bilingue français / anglais.",
-      "Deux offres claires : répétiteurs à domicile et ressources pédagogiques.",
-      "Conversion directe : boutons WhatsApp et appel visibles sur chaque page.",
-      "Paiement sécurisé par Mobile Money et Orange Money.",
-    ],
-    heroVisual: "/projects/learning-academy/home-desktop.webp",
-    problem: [
-      "Les familles hésitent à confier la scolarité de leurs enfants sans comprendre clairement l'offre, ni avoir de raisons de faire confiance.",
-    ],
-    vision: [
-      "Présenter clairement les services, les matières et les niveaux accompagnés.",
-      "Rassurer les familles et transformer une visite en demande de contact, notamment via WhatsApp.",
-    ],
-    features: [
-      { title: "Présentation des services", description: "Accompagnement scolaire, matières et niveaux." },
-      { title: "Parcours utilisateur", description: "Du premier contact à la demande d'information." },
-      { title: "Section de réassurance", description: "Preuves et éléments de confiance." },
-      { title: "Formulaires de contact" },
-      { title: "WhatsApp", description: "Canal de conversion principal." },
-      { title: "Communication digitale", description: "Visuels publicitaires et motion design." },
-    ],
-    demonstrates: [
-      "Comprendre un marché local.",
-      "Présenter clairement une offre de service.",
-      "Transformer une visite en demande de contact.",
-    ],
-    visuals: [
-      { src: "/projects/learning-academy/home-desktop.webp", caption: "Page d'accueil", kind: "desktop" },
-      { src: "/projects/learning-academy/subjects-desktop.webp", caption: "Présentation des deux services", kind: "desktop" },
-      { src: "/projects/learning-academy/home-mobile.webp", caption: "Version mobile", kind: "mobile" },
-      { src: "/projects/learning-academy/subjects-mobile.webp", caption: "Services sur mobile", kind: "mobile" },
-    ],
-  },
 
   /* ---------------------------------------------------------- */
   {
     slug: "spacekit",
-    index: "05",
+    index: "04",
     name: "Spacekit",
     positioning: "B2B Office Solutions & Digital Commerce",
     summary:
@@ -287,7 +250,7 @@ export const projectsData: Project[] = [
   /* ---------------------------------------------------------- */
   {
     slug: "road-alert",
-    index: "06",
+    index: "05",
     name: "Road Alert",
     positioning: "Intelligent Urban Mobility Platform",
     summary:
@@ -308,6 +271,7 @@ export const projectsData: Project[] = [
       "Application installable (PWA et Android).",
     ],
     heroVisual: "/projects/motoalert/home-desktop.webp",
+    fullVisual: { src: "/projects/motoalert/full-desktop.webp", width: 1200, height: 4333 },
     problem: [
       "Dans les villes africaines congestionnées, les applications de navigation classiques ignorent les réalités du terrain : raccourcis empruntés par les motos, état des routes, incidents.",
       "Ces informations existent, mais elles circulent de bouche à oreille au lieu d'être partagées et vérifiées.",

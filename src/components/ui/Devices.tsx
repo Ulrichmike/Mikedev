@@ -8,15 +8,19 @@ interface FrameProps {
   preload?: boolean;
 }
 
-/** Fenêtre de navigateur sombre autour d'une capture desktop. */
+/**
+ * Fenêtre de navigateur sombre autour d'une capture desktop.
+ * Avec `full` (capture pleine page), le site défile dans la fenêtre au survol.
+ */
 export function BrowserFrame({
   src,
   alt,
   url,
+  full,
   className = "",
   sizes = "(max-width: 768px) 100vw, 60vw",
   preload,
-}: FrameProps & { url?: string }) {
+}: FrameProps & { url?: string; full?: { src: string; width: number; height: number } }) {
   return (
     <div
       className={`overflow-hidden rounded-xl border border-white/10 bg-[#16161a] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] ${className}`}
@@ -31,8 +35,20 @@ export function BrowserFrame({
           </span>
         )}
       </div>
-      <div className="relative aspect-[16/10]">
-        <Image src={src} alt={alt} fill sizes={sizes} preload={preload} className="object-cover object-top" />
+      <div className="scroll-shot-host relative aspect-[16/10] overflow-hidden">
+        {full ? (
+          <Image
+            src={full.src}
+            alt={alt}
+            width={full.width}
+            height={full.height}
+            sizes={sizes}
+            preload={preload}
+            className="scroll-shot"
+          />
+        ) : (
+          <Image src={src} alt={alt} fill sizes={sizes} preload={preload} className="object-cover object-top" />
+        )}
       </div>
     </div>
   );

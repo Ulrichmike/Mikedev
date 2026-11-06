@@ -51,7 +51,7 @@ export function Header({ profile }: { profile: UserProfile }) {
           }`}
         >
           <Link href="/#top" onClick={() => setMenuOpen(false)} className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-fg">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-sm font-bold text-accent-fg transition-transform duration-500 hover:rotate-[-10deg] hover:scale-110">
               {initials}
             </span>
             <span className="hidden text-sm font-semibold sm:block">{profile.name}</span>

@@ -99,7 +99,7 @@ export function CaseStudyView({ project, next }: { project: Project; next: Proje
               href={project.url}
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-fg shadow-[0_0_40px_-10px] shadow-accent/60 transition-transform hover:scale-[1.03]"
+              className="btn-shine inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-accent-fg shadow-[0_0_40px_-10px] shadow-accent/60 transition-transform hover:scale-[1.03]"
             >
               Visiter le site en ligne <ArrowUpRight className="h-4 w-4" />
             </a>
@@ -121,7 +121,7 @@ export function CaseStudyView({ project, next }: { project: Project; next: Proje
         >
           {project.heroVisual ? (
             <>
-              <BrowserFrame src={project.heroVisual} alt={`${project.name} — page d'accueil`} url={project.url} sizes="(max-width: 1200px) 100vw, 1100px" preload />
+              <BrowserFrame src={project.heroVisual} full={project.fullVisual} alt={`${project.name} — page d'accueil`} url={project.url} sizes="(max-width: 1200px) 100vw, 1100px" preload />
               {mobile && (
                 <PhoneFrame
                   src={mobile}

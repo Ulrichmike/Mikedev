@@ -26,7 +26,7 @@ export function ExpertiseSection() {
           {[...all, ...all].map((name, i) => (
             <span
               key={i}
-              className="rounded-xl border border-line bg-surface px-5 py-3 text-lg font-medium text-ink/90"
+              className="rounded-xl border border-line bg-surface px-5 py-3 text-lg font-medium text-ink/90 transition-all duration-300 hover:-translate-y-1 hover:border-accent/50 hover:text-accent hover:shadow-[0_10px_30px_-12px] hover:shadow-accent/50"
             >
               {name}
             </span>

@@ -70,7 +70,7 @@ export function BookingContactSection({ profile }: { profile: UserProfile }) {
   return (
     <section id="contact" className="py-16 md:py-24">
       <div className="mx-auto max-w-6xl px-5">
-        <Reveal className="relative overflow-hidden rounded-[2rem] border border-line bg-surface">
+        <Reveal className="glow-border relative overflow-hidden rounded-[2rem] border border-line bg-surface">
           {/* Halo */}
           <div
             aria-hidden="true"
@@ -206,7 +206,7 @@ export function BookingContactSection({ profile }: { profile: UserProfile }) {
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="group flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3.5 text-[15px] font-semibold text-accent-fg shadow-[0_0_40px_-10px] shadow-accent/60 transition-transform hover:scale-[1.01] disabled:opacity-60"
+                      className="btn-shine group flex w-full items-center justify-center gap-2 rounded-xl bg-accent py-3.5 text-[15px] font-semibold text-accent-fg shadow-[0_0_40px_-10px] shadow-accent/60 transition-transform hover:scale-[1.01] disabled:opacity-60"
                     >
                       {status === "sending" ? "Envoi…" : "Envoyer ma demande"}
                       <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

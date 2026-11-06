@@ -6,6 +6,7 @@ import { motion } from "motion/react";
 import { useModal } from "@/context/ModalContext";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Background } from "@/components/ui/Background";
 
 /** Structure commune à toutes les pages (accueil + études de cas). */
 export function SiteShell({ children }: { children: ReactNode }) {
@@ -22,6 +23,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative min-h-screen bg-canvas font-sans text-ink antialiased">
+      <Background />
       <Header profile={profile} />
       {/* Transition d'entrée de page : opacité seule (aucun transform,
           pour ne pas casser les éléments position: fixed) */}
@@ -29,10 +31,13 @@ export function SiteShell({ children }: { children: ReactNode }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
+        className="relative z-10"
       >
         {children}
       </motion.main>
-      <Footer profile={profile} />
+      <div className="relative z-10">
+        <Footer profile={profile} />
+      </div>
     </div>
   );
 }

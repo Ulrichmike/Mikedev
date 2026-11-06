@@ -110,6 +110,8 @@ export interface Project {
   demonstrates: string[];
 
   heroVisual?: string;
+  /** Capture pleine page : la page défile dans la fenêtre au survol */
+  fullVisual?: { src: string; width: number; height: number };
   visuals: ProjectVisual[];
 }
 

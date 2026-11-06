@@ -55,7 +55,6 @@ export function Hero({ profile }: { profile: UserProfile }) {
       {/* Fond : halo + trame */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
         <div className="animate-glow absolute left-1/2 top-[-12%] h-[620px] w-[980px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--accent-color)_32%,transparent),transparent)] blur-2xl" />
-        <div className="bg-dots absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_20%,transparent_70%)]" />
       </div>
 
       <div className="mx-auto max-w-6xl px-5 text-center">
@@ -95,7 +94,7 @@ export function Hero({ profile }: { profile: UserProfile }) {
         <motion.div {...fade(0.7)} className="mt-10 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/#projets"
-            className="group inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-[15px] font-semibold text-accent-fg shadow-[0_0_40px_-8px] shadow-accent/60 transition-transform hover:scale-[1.03]"
+            className="btn-shine group inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-[15px] font-semibold text-accent-fg shadow-[0_0_40px_-8px] shadow-accent/60 transition-transform hover:scale-[1.03]"
           >
             Voir mes projets
             <ArrowDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
@@ -121,7 +120,7 @@ export function Hero({ profile }: { profile: UserProfile }) {
         >
           {eventage?.heroVisual && (
             <Link href="/projets/eventage" aria-label="Étude de cas Eventage" className="block">
-              <BrowserFrame src={eventage.heroVisual} alt="Eventage en production" url={eventage.url} sizes="(max-width: 1200px) 100vw, 1100px" preload />
+              <BrowserFrame src={eventage.heroVisual} full={eventage.fullVisual} alt="Eventage en production" url={eventage.url} sizes="(max-width: 1200px) 100vw, 1100px" preload />
             </Link>
           )}
 
@@ -154,9 +153,9 @@ export function Hero({ profile }: { profile: UserProfile }) {
       <div className="relative mx-auto mt-16 max-w-6xl px-5">
         <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line md:grid-cols-4">
           {facts.map((f) => (
-            <div key={f.label} className="bg-canvas px-6 py-6">
+            <div key={f.label} className="group bg-canvas px-6 py-6 transition-colors duration-300 hover:bg-surface">
               <dt className="sr-only">{f.label}</dt>
-              <dd className="text-3xl font-semibold tracking-[-0.03em]">{f.value}</dd>
+              <dd className="text-3xl font-semibold tracking-[-0.03em] transition-colors duration-300 group-hover:text-accent">{f.value}</dd>
               <dd className="mt-1 text-sm text-muted">{f.label}</dd>
             </div>
           ))}
